@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Are You Smarter Than a 5th Grader? — Current Events Edition</title>
+  <style>
+    :root {
+      --navy: #101a4d;
+      --blue: #2257ff;
+      --sky: #35c6ff;
+      --yellow: #ffd84d;
+      --orange: #ff8a3d;
+      --pink: #ff4fa3;
+      --green: #39d98a;
+      --red: #ff4d5e;
+      --purple: #8c5cff;
+      --white: #fffaf0;
+      --ink: #14213d;
+      --muted: #7c8499;
+      --gray: #d7dbe8;
+      --shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+      --soft-shadow: 0 10px 24px rgba(16, 26, 77, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255, 216, 77, 0.45), transparent 28%),
+        radial-gradient(circle at 85% 18%, rgba(255, 79, 163, 0.35), transparent 30%),
+        radial-gradient(circle at 50% 95%, rgba(53, 198, 255, 0.38), transparent 38%),
+        linear-gradient(135deg, #101a4d 0%, #24318a 45%, #1164b8 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(45deg, rgba(255,255,255,0.07) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255,255,255,0.07) 25%, transparent 25%);
+      background-size: 70px 70px;
+      opacity: 0.45;
+    }
+
+    button, input { font: inherit; }
+
+    button {
+      border: 0;
+      border-radius: 18px;
+      padding: 14px 20px;
+      cursor: pointer;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+      box-shadow: 0 7px 0 rgba(0,0,0,0.22), var(--soft-shadow);
+    }
+
+    button:hover:not(:disabled) { transform: translateY(-2px) scale(1.02); filter: brightness(1.04); }
+    button:active:not(:disabled) { transform: translateY(3px) scale(0.99); box-shadow: 0 3px 0 rgba(0,0,0,0.25), var(--soft-shadow); }
+    button:disabled { cursor: not-allowed; filter: grayscale(0.7); opacity: 0.65; box-shadow: none; }
+
+    .screen { display: none; min-height: 100vh; padding: 20px; position: relative; z-index: 1; }
+    .screen.active { display: block; animation: popIn 0.35s ease both; }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(14px) scale(0.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes sparkle {
+      0%, 100% { transform: rotate(-2deg) scale(1); }
+      50% { transform: rotate(2deg) scale(1.035); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 216, 77, 0.65), var(--shadow); }
+      50% { box-shadow: 0 0 0 12px rgba(255, 216, 77, 0), var(--shadow); }
+    }
+
+    .title-wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      min-height: calc(100vh - 40px);
+      display: grid;
+      place-items: center;
+    }
+
+    .title-card, .question-card, .final-card {
+      width: min(1120px, 100%);
+      background: rgba(255, 250, 240, 0.96);
+      border: 6px solid var(--yellow);
+      border-radius: 34px;
+      box-shadow: var(--shadow);
+      padding: clamp(22px, 4vw, 46px);
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--pink), var(--orange));
+      color: white;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: clamp(1rem, 1.7vw, 1.45rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      box-shadow: var(--soft-shadow);
+    }
+
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(2.4rem, 7vw, 6.4rem);
+      line-height: 0.95;
+      color: var(--navy);
+      text-shadow: 4px 4px 0 var(--yellow), 8px 8px 0 rgba(34, 87, 255, 0.16);
+      animation: sparkle 3.2s ease-in-out infinite;
+    }
+
+    h2 { margin: 0; font-size: clamp(1.7rem, 3.5vw, 3.2rem); }
+    h3 { margin: 0; font-size: clamp(1.3rem, 2.4vw, 2.2rem); }
+
+    .subtitle {
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+      font-weight: 800;
+      color: #35406f;
+      margin-bottom: 24px;
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(230px, 1fr));
+      gap: 18px;
+      margin: 28px 0;
+      text-align: left;
+    }
+
+    label { display: block; font-weight: 900; font-size: 1.25rem; margin-bottom: 8px; }
+
+    input {
+      width: 100%;
+      border: 4px solid #c7d2fe;
+      border-radius: 18px;
+      padding: 16px 18px;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--navy);
+      outline: none;
+      background: white;
+    }
+
+    input:focus { border-color: var(--pink); box-shadow: 0 0 0 5px rgba(255, 79, 163, 0.18); }
+
+    .primary { background: linear-gradient(135deg, var(--yellow), #ffb703); color: var(--navy); font-size: clamp(1.25rem, 2vw, 1.7rem); }
+    .secondary { background: linear-gradient(135deg, var(--sky), var(--blue)); color: white; }
+    .danger { background: linear-gradient(135deg, var(--red), #b5172f); color: white; }
+    .success { background: linear-gradient(135deg, var(--green), #0aa36d); color: #062b1d; }
+    .neutral { background: linear-gradient(135deg, #eef2ff, #c7d2fe); color: var(--navy); }
+    .purple { background: linear-gradient(135deg, var(--purple), #5132c9); color: white; }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 14px;
+      align-items: stretch;
+      margin: 0 auto 16px;
+      max-width: 1500px;
+    }
+
+    .score-card {
+      background: rgba(255, 250, 240, 0.97);
+      border: 4px solid var(--yellow);
+      border-radius: 24px;
+      padding: 12px;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .team-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      color: var(--navy);
+    }
+
+    .team-name { font-size: clamp(1.25rem, 2vw, 2rem); font-weight: 1000; overflow-wrap: anywhere; }
+    .score { font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 1000; color: var(--blue); }
+
+    .helps { display: flex; flex-wrap: wrap; gap: 8px; }
+    .help-btn {
+      padding: 9px 11px;
+      border-radius: 14px;
+      font-size: 0.98rem;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.18), var(--soft-shadow);
+      background: linear-gradient(135deg, #ffffff, #fce7f3);
+      color: var(--navy);
+      border: 2px solid #f9a8d4;
+    }
+
+    .help-btn.used { background: var(--gray); color: var(--muted); border-color: #b4b9c9; }
+
+    .game-title-mini {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: rgba(16, 26, 77, 0.92);
+      color: white;
+      border: 4px solid var(--yellow);
+      border-radius: 24px;
+      padding: 14px 18px;
+      box-shadow: var(--soft-shadow);
+      font-weight: 1000;
+      font-size: clamp(1.1rem, 2vw, 2rem);
+      min-width: min(360px, 100%);
+    }
+
+    .board-tools {
+      max-width: 1500px;
+      margin: 0 auto 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .toggle {
+      background: rgba(255, 250, 240, 0.97);
+      color: var(--navy);
+      border: 4px solid #c7d2fe;
+      font-size: clamp(1rem, 1.6vw, 1.35rem);
+    }
+
+    .toggle.on { border-color: var(--red); background: linear-gradient(135deg, #fff1f2, #fecdd3); }
+
+    .board-wrap {
+      max-width: 1500px;
+      margin: 0 auto;
+      background: rgba(9, 15, 51, 0.76);
+      border: 6px solid var(--yellow);
+      border-radius: 30px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+    }
+
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(9, minmax(130px, 1fr));
+      gap: 10px;
+      min-width: 1180px;
+    }
+
+    .category {
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: white;
+      font-size: clamp(1rem, 1.25vw, 1.35rem);
+      font-weight: 1000;
+      text-shadow: 1px 2px 0 rgba(0,0,0,0.28);
+      box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2);
+    }
+
+    .point-btn {
+      width: 100%;
+      min-height: 92px;
+      font-size: clamp(1.65rem, 2.6vw, 2.65rem);
+      color: var(--navy);
+      background: linear-gradient(135deg, var(--yellow), #ffb703);
+      border-radius: 16px;
+      animation: pulseGlow 4s ease-in-out infinite;
+    }
+
+    .point-btn.used {
+      background: linear-gradient(135deg, #bdc3d1, #8d96aa);
+      color: #4b5568;
+      animation: none;
+      text-decoration: line-through;
+    }
+
+    .question-card { margin: 0 auto; max-width: 1240px; text-align: left; }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #e0f2fe;
+      color: #0f3460;
+      border: 3px solid #7dd3fc;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: clamp(1rem, 1.5vw, 1.4rem);
+      font-weight: 1000;
+    }
+
+    .question-text {
+      background: linear-gradient(135deg, #ffffff, #fff7d6);
+      border: 4px solid var(--yellow);
+      border-radius: 24px;
+      padding: clamp(18px, 3vw, 30px);
+      font-size: clamp(1.8rem, 3.8vw, 3.8rem);
+      line-height: 1.1;
+      font-weight: 1000;
+      text-align: center;
+      color: var(--navy);
+      margin: 14px 0;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(240px, 1fr));
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .choice {
+      background: white;
+      border: 4px solid #c7d2fe;
+      border-radius: 20px;
+      padding: 18px;
+      font-size: clamp(1.2rem, 2vw, 1.8rem);
+      font-weight: 900;
+      color: var(--navy);
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .choice.hidden-choice {
+      opacity: 0.18;
+      text-decoration: line-through;
+      filter: grayscale(1);
+    }
+
+    .short-prompt {
+      background: #f0fdf4;
+      border: 4px dashed #22c55e;
+      border-radius: 22px;
+      padding: 18px;
+      text-align: center;
+      font-size: clamp(1.25rem, 2vw, 1.8rem);
+      font-weight: 900;
+      color: #14532d;
+    }
+
+    .timer-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .timer-display {
+      min-width: 180px;
+      text-align: center;
+      background: var(--navy);
+      color: white;
+      border: 5px solid var(--yellow);
+      border-radius: 22px;
+      padding: 12px 18px;
+      font-size: clamp(2rem, 4vw, 4.5rem);
+      font-weight: 1000;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .timer-display.low { color: var(--yellow); border-color: var(--red); animation: pulseGlow 0.8s ease-in-out infinite; }
+
+    .message {
+      min-height: 46px;
+      text-align: center;
+      color: var(--navy);
+      font-size: clamp(1.15rem, 2vw, 1.65rem);
+      font-weight: 1000;
+      margin: 8px 0;
+    }
+
+    .answer-box {
+      display: none;
+      background: #ecfeff;
+      border: 5px solid var(--sky);
+      border-radius: 24px;
+      padding: 20px;
+      margin: 16px 0;
+      text-align: center;
+      animation: popIn 0.25s ease both;
+    }
+
+    .answer-box.visible { display: block; }
+    .answer-box .answer { font-size: clamp(1.45rem, 2.6vw, 2.5rem); font-weight: 1000; color: var(--navy); margin-bottom: 8px; }
+    .answer-box .explanation { font-size: clamp(1.1rem, 1.8vw, 1.55rem); font-weight: 800; color: #334155; line-height: 1.35; }
+
+    .button-row, .scoring-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .button-row button, .scoring-row button { font-size: clamp(1rem, 1.65vw, 1.45rem); }
+    .scoring-row { display: none; }
+    .scoring-row.visible { display: flex; }
+
+    .final-card { margin: 0 auto; max-width: 1050px; }
+    .final-scores { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin: 24px 0; }
+    .final-score-box {
+      background: white;
+      border: 5px solid #c7d2fe;
+      border-radius: 26px;
+      padding: 22px;
+      box-shadow: var(--soft-shadow);
+    }
+    .final-score-box strong { display: block; font-size: clamp(1.4rem, 2.5vw, 2.5rem); color: var(--navy); overflow-wrap: anywhere; }
+    .final-score-box span { display: block; font-size: clamp(2.3rem, 5vw, 5rem); font-weight: 1000; color: var(--blue); }
+    .winner { font-size: clamp(1.8rem, 4vw, 4rem); font-weight: 1000; color: var(--pink); margin: 14px 0; }
+    .reflection {
+      background: #fff7ed;
+      border: 5px dashed var(--orange);
+      border-radius: 24px;
+      padding: 20px;
+      font-size: clamp(1.25rem, 2.4vw, 2.1rem);
+      font-weight: 1000;
+      color: var(--navy);
+      margin: 20px 0;
+    }
+
+    @media (max-width: 900px) {
+      .topbar { grid-template-columns: 1fr; }
+      .game-title-mini { order: -1; min-width: 0; }
+      .setup-grid, .choices, .final-scores { grid-template-columns: 1fr; }
+      .question-card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <section id="startScreen" class="screen active">
+    <div class="title-wrap">
+      <div class="title-card">
+        <span class="badge">Teacher-Controlled Classroom Game</span>
+        <h1>Are You Smarter Than a 5th Grader?</h1>
+        <p class="subtitle">Current Events Edition</p>
+        <div class="setup-grid">
+          <div>
+            <label for="team1Input">Team 1 Name</label>
+            <input id="team1Input" maxlength="24" placeholder="Team 1" />
+          </div>
+          <div>
+            <label for="team2Input">Team 2 Name</label>
+            <input id="team2Input" maxlength="24" placeholder="Team 2" />
+          </div>
+        </div>
+        <button class="primary" onclick="startGame()">Start Game</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="boardScreen" class="screen">
+    <div id="scoreboard" class="topbar"></div>
+    <div class="board-tools">
+      <button id="penaltyToggle" class="toggle" onclick="togglePenalty()">Wrong answers lose points: OFF</button>
+      <button class="danger" onclick="endGame()">End Game</button>
+    </div>
+    <div class="board-wrap">
+      <div id="gameBoard" class="game-board"></div>
+    </div>
+  </section>
+
+  <section id="questionScreen" class="screen">
+    <div id="questionScoreboard" class="topbar"></div>
+    <div class="question-card">
+      <div class="question-header">
+        <span id="qCategory" class="pill"></span>
+        <span id="qGrade" class="pill"></span>
+        <span id="qPoints" class="pill"></span>
+      </div>
+      <div id="questionText" class="question-text"></div>
+      <div id="choices" class="choices"></div>
+      <div id="shortPrompt" class="short-prompt" style="display:none;">Short answer: Students should explain their thinking out loud.</div>
+      <div class="timer-row">
+        <div id="timerDisplay" class="timer-display">60</div>
+        <button class="secondary" onclick="startTimer()">Start 60 Second Timer</button>
+        <button class="neutral" onclick="resetTimer()">Reset Timer</button>
+      </div>
+      <div id="message" class="message"></div>
+      <div id="answerBox" class="answer-box">
+        <div id="answerText" class="answer"></div>
+        <div id="explanationText" class="explanation"></div>
+      </div>
+      <div class="button-row">
+        <button id="showAnswerBtn" class="primary" onclick="showAnswer()">Show Answer</button>
+        <button class="neutral" onclick="backToBoard(false)">Back to Board</button>
+      </div>
+      <div id="scoringRow" class="scoring-row"></div>
+    </div>
+  </section>
+
+  <section id="finalScreen" class="screen">
+    <div class="title-wrap">
+      <div class="final-card">
+        <span class="badge">Final Scores</span>
+        <h2>Game Over!</h2>
+        <div id="finalScores" class="final-scores"></div>
+        <div id="winnerText" class="winner"></div>
+        <div class="reflection">What current event did you understand better today? Explain why it matters.</div>
+        <button class="primary" onclick="showScreen('boardScreen')">Return to Board</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /* =============================================================
+       QUESTION BANK — 45 classroom-ready questions.
+       Teachers can edit the objects below. Keep category, grade,
+       points, type, question, answer, and explanation for each item.
+       Multiple choice questions also need a choices array.
+       ============================================================= */
+    const questionBank = [
+      { category: "Crime & Justice", grade: "1st Grade", points: 100, type: "mc", question: "What is one safe thing people should do when they see an emergency in public?", choices: ["Call a trusted adult or emergency number", "Run closer to film it", "Spread guesses online", "Ignore everyone nearby"], answer: "Call a trusted adult or emergency number", explanation: "Public safety starts with getting help and staying away from danger." },
+      { category: "Crime & Justice", grade: "2nd Grade", points: 200, type: "short", question: "News stories sometimes say a person is 'accused.' What does that word mean?", answer: "It means someone says the person may have broken a rule or law, but it has not been proven yet.", explanation: "Accused does not mean guilty. Courts and evidence are used to decide what happened." },
+      { category: "Crime & Justice", grade: "3rd Grade", points: 300, type: "mc", question: "Why do many communities discuss body cameras for police officers?", choices: ["To create a record of what happened", "To replace all judges", "To make traffic lights change", "To stop all weather emergencies"], answer: "To create a record of what happened", explanation: "Body cameras can help people review events more clearly, though communities still discuss rules for privacy and use." },
+      { category: "Crime & Justice", grade: "4th Grade", points: 400, type: "short", question: "Why is it important for reporters to check facts before naming someone in a crime story?", answer: "Because wrong information can hurt innocent people and confuse the public.", explanation: "Careful reporting protects fairness and helps readers trust the news." },
+      { category: "Crime & Justice", grade: "5th Grade", points: 500, type: "mc", question: "A city wants safer parks after dark. Which plan balances safety and community trust best?", choices: ["Add lights, community events, and clear reporting options", "Close every park forever", "Post rumors about visitors", "Let only one group use parks"], answer: "Add lights, community events, and clear reporting options", explanation: "Balanced public safety plans try to prevent problems while keeping shared spaces welcoming." },
+
+      { category: "Politics", grade: "1st Grade", points: 100, type: "mc", question: "What do people usually do in an election?", choices: ["Vote for leaders or ideas", "Measure rainfall", "Buy concert tickets", "Name planets"], answer: "Vote for leaders or ideas", explanation: "Elections are a way for people to choose leaders or decide public questions." },
+      { category: "Politics", grade: "2nd Grade", points: 200, type: "short", question: "Name one reason people should listen respectfully when classmates disagree about an issue.", answer: "Respectful listening helps people learn, solve problems, and keep conversations fair.", explanation: "In a democracy, people often disagree. Respect helps the group make better choices." },
+      { category: "Politics", grade: "3rd Grade", points: 300, type: "mc", question: "Which source is usually best for learning the official rules for voting in your state?", choices: ["The state election office website", "A random meme", "A celebrity fan page", "A mystery text message"], answer: "The state election office website", explanation: "Official election offices publish rules about registration, polling places, and deadlines." },
+      { category: "Politics", grade: "4th Grade", points: 400, type: "short", question: "What is the difference between a fact and an opinion in a political debate?", answer: "A fact can be checked with evidence. An opinion is what someone thinks or believes.", explanation: "Good citizens look for facts while also understanding that people can have different opinions." },
+      { category: "Politics", grade: "5th Grade", points: 500, type: "mc", question: "Why do local elections matter even though national elections get more attention?", choices: ["Local leaders often decide schools, roads, libraries, and safety rules", "Local elections choose movie awards", "They decide every country's laws", "They are only for professional athletes"], answer: "Local leaders often decide schools, roads, libraries, and safety rules", explanation: "Local government decisions can affect daily life very directly." },
+
+      { category: "Music / Pop Culture", grade: "1st Grade", points: 100, type: "mc", question: "Why might a popular song become part of a current event?", choices: ["Many people talk about it, stream it, or use it in videos", "It changes the weather", "It counts votes", "It builds bridges alone"], answer: "Many people talk about it, stream it, or use it in videos", explanation: "Pop culture can become news when it shapes what many people are discussing or creating." },
+      { category: "Music / Pop Culture", grade: "2nd Grade", points: 200, type: "short", question: "What is one kind way fans can talk about two artists they like?", answer: "They can share what they enjoy without insulting other artists or fans.", explanation: "Kind fan behavior makes pop culture more fun and safer for everyone." },
+      { category: "Music / Pop Culture", grade: "3rd Grade", points: 300, type: "mc", question: "Award shows often include speeches. What can a speech help an artist do?", choices: ["Thank helpers and bring attention to an issue", "Guarantee everyone agrees", "Erase all mistakes", "Make every song free"], answer: "Thank helpers and bring attention to an issue", explanation: "Artists sometimes use public moments to thank others or discuss causes they care about." },
+      { category: "Music / Pop Culture", grade: "4th Grade", points: 400, type: "short", question: "Why should people check whether a celebrity quote online is real before sharing it?", answer: "Fake quotes can spread misinformation and unfairly affect someone's reputation.", explanation: "Checking sources helps stop rumors from becoming bigger problems." },
+      { category: "Music / Pop Culture", grade: "5th Grade", points: 500, type: "mc", question: "A movie becomes popular worldwide. Which question best connects pop culture to current events?", choices: ["What ideas, places, or communities are people discussing because of it?", "How many pencils are in the theater?", "Can it replace every textbook?", "Does every viewer have the same favorite scene?"], answer: "What ideas, places, or communities are people discussing because of it?", explanation: "Pop culture can open conversations about identity, history, technology, and social issues." },
+
+      { category: "Sports", grade: "1st Grade", points: 100, type: "mc", question: "What is good sportsmanship after a close game?", choices: ["Respecting both teams", "Making fun of the other team", "Refusing to shake hands", "Blaming the weather for everything"], answer: "Respecting both teams", explanation: "Sportsmanship means competing hard while treating others with respect." },
+      { category: "Sports", grade: "2nd Grade", points: 200, type: "short", question: "Why do sports teams practice before big games?", answer: "They practice to build skills, teamwork, and confidence.", explanation: "Preparation helps teams make better decisions under pressure." },
+      { category: "Sports", grade: "3rd Grade", points: 300, type: "mc", question: "Why might a championship game become a major news story?", choices: ["It brings fans together and can affect a city's pride and economy", "It decides school lunch menus everywhere", "It stops all other sports forever", "It changes the alphabet"], answer: "It brings fans together and can affect a city's pride and economy", explanation: "Major sports events can influence travel, business, celebrations, and community identity." },
+      { category: "Sports", grade: "4th Grade", points: 400, type: "short", question: "How can athletes use their fame to help a community?", answer: "They can support charities, encourage healthy habits, visit schools, or speak up for good causes.", explanation: "Public figures can use attention to encourage positive action." },
+      { category: "Sports", grade: "5th Grade", points: 500, type: "mc", question: "A school changes a sports rule to reduce injuries. What is the main trade-off to discuss?", choices: ["How to keep the game fun while protecting players", "How to make uniforms heavier", "How to remove every referee", "How to stop fans from learning rules"], answer: "How to keep the game fun while protecting players", explanation: "Safety rules often try to protect people while keeping the activity fair and enjoyable." },
+
+      { category: "Technology", grade: "1st Grade", points: 100, type: "mc", question: "What is artificial intelligence, or AI, often used to do?", choices: ["Help computers find patterns or make suggestions", "Grow apples on screens", "Turn desks into boats", "Make gravity disappear"], answer: "Help computers find patterns or make suggestions", explanation: "AI tools use data and instructions to help with tasks like sorting, writing, and predicting." },
+      { category: "Technology", grade: "2nd Grade", points: 200, type: "short", question: "Name one safe habit when using social media or online games.", answer: "Do not share private information, and tell a trusted adult if something feels wrong.", explanation: "Online safety protects your identity, feelings, and family information." },
+      { category: "Technology", grade: "3rd Grade", points: 300, type: "mc", question: "Why are schools discussing rules for AI homework tools?", choices: ["To help students learn honestly and safely", "To ban all pencils", "To make recess shorter everywhere", "To replace teachers with robots tomorrow"], answer: "To help students learn honestly and safely", explanation: "AI can be useful, but schools want students to think, create, and cite help fairly." },
+      { category: "Technology", grade: "4th Grade", points: 400, type: "short", question: "Why should people be careful with deepfake videos or AI-made images?", answer: "They can make fake events look real, so people need to check trusted sources.", explanation: "Digital media can be edited or generated, which makes source checking very important." },
+      { category: "Technology", grade: "5th Grade", points: 500, type: "mc", question: "A city uses sensors to manage traffic lights. What question should citizens ask?", choices: ["How will the data be used and protected?", "Will traffic lights sing every morning?", "Can sensors do homework?", "Will roads become invisible?"], answer: "How will the data be used and protected?", explanation: "Smart technology can help communities, but privacy and fairness should be considered." },
+
+      { category: "Identity & Beliefs", grade: "1st Grade", points: 100, type: "mc", question: "What is a respectful way to learn about a holiday your family does not celebrate?", choices: ["Ask kind questions and listen", "Laugh at it", "Tell people to stop celebrating", "Pretend no one is different"], answer: "Ask kind questions and listen", explanation: "Respectful curiosity helps classmates feel seen and valued." },
+      { category: "Identity & Beliefs", grade: "2nd Grade", points: 200, type: "short", question: "What does community mean?", answer: "A community is a group of people connected by a place, interest, culture, or goal.", explanation: "People can belong to many communities at once, such as school, town, team, or faith group." },
+      { category: "Identity & Beliefs", grade: "3rd Grade", points: 300, type: "mc", question: "Why do news stories sometimes include different viewpoints from the same community?", choices: ["People in one group can still have different experiences and opinions", "Only one person can speak for everyone", "Viewpoints are never important", "It makes maps easier to draw"], answer: "People in one group can still have different experiences and opinions", explanation: "No community is exactly the same inside. Listening to more than one voice gives a fuller picture." },
+      { category: "Identity & Beliefs", grade: "4th Grade", points: 400, type: "short", question: "How can schools make students from many cultures feel welcome?", answer: "They can use respectful names, include many stories, prevent bullying, and invite students to share traditions.", explanation: "Inclusion means people can participate without hiding important parts of who they are." },
+      { category: "Identity & Beliefs", grade: "5th Grade", points: 500, type: "mc", question: "A public debate involves a belief that some people support and others do not. What is a fair discussion rule?", choices: ["Critique ideas without insulting people's identities", "Let the loudest person win", "Ban all questions", "Assume every group thinks the same"], answer: "Critique ideas without insulting people's identities", explanation: "Fair debate focuses on claims and evidence while treating people with dignity." },
+
+      { category: "World News", grade: "1st Grade", points: 100, type: "mc", question: "What is a country?", choices: ["A place with its own government and borders", "A type of sandwich", "A school supply", "A sports whistle"], answer: "A place with its own government and borders", explanation: "World news often compares events in different countries." },
+      { category: "World News", grade: "2nd Grade", points: 200, type: "short", question: "Why might people in one country care about a natural disaster in another country?", answer: "People may want to help, and events can affect families, travel, supplies, and the environment.", explanation: "The world is connected, so big events can matter far beyond one place." },
+      { category: "World News", grade: "3rd Grade", points: 300, type: "mc", question: "When news says countries are negotiating, what are they trying to do?", choices: ["Talk to reach an agreement", "Play a secret video game", "Trade weather", "Erase maps"], answer: "Talk to reach an agreement", explanation: "Negotiation is a peaceful way to solve problems or make plans." },
+      { category: "World News", grade: "4th Grade", points: 400, type: "short", question: "What is one reason people may leave their home country and move somewhere safer?", answer: "They may leave because of conflict, disasters, lack of jobs, or danger to their rights.", explanation: "Migration stories often involve difficult choices and hopes for safety and opportunity." },
+      { category: "World News", grade: "5th Grade", points: 500, type: "mc", question: "Why do world leaders meet at climate conferences?", choices: ["To discuss shared plans for pollution, energy, and extreme weather", "To choose every country's favorite color", "To cancel all seasons", "To make oceans smaller overnight"], answer: "To discuss shared plans for pollution, energy, and extreme weather", explanation: "Climate issues cross borders, so countries often need to cooperate." },
+
+      { category: "U.S. News", grade: "1st Grade", points: 100, type: "mc", question: "Which level of government is closest to most people's daily life?", choices: ["Local government", "A moon colony", "A movie studio", "A distant volcano"], answer: "Local government", explanation: "Local government works on things like schools, roads, parks, and libraries." },
+      { category: "U.S. News", grade: "2nd Grade", points: 200, type: "short", question: "Name one service that taxes can help pay for in a community.", answer: "Taxes can help pay for schools, roads, firefighters, libraries, parks, or public health services.", explanation: "Taxes are one way communities pay for shared needs." },
+      { category: "U.S. News", grade: "3rd Grade", points: 300, type: "mc", question: "Why do weather alerts matter during storms, floods, or heat waves?", choices: ["They help people prepare and stay safe", "They pick sports winners", "They sell movie tickets", "They make homework vanish"], answer: "They help people prepare and stay safe", explanation: "Alerts can tell people when to seek shelter, cool down, or avoid dangerous roads." },
+      { category: "U.S. News", grade: "4th Grade", points: 400, type: "short", question: "Why might a school board meeting be covered in local news?", answer: "School boards make decisions about budgets, calendars, rules, books, and programs that affect students.", explanation: "Local news helps families understand decisions that affect their schools." },
+      { category: "U.S. News", grade: "5th Grade", points: 500, type: "mc", question: "A state debates a new public health rule. Which evidence would be most useful?", choices: ["Data from doctors, scientists, and community needs", "Only the funniest comment online", "A rumor from one person", "A random sports score"], answer: "Data from doctors, scientists, and community needs", explanation: "Public health decisions should consider expert evidence and how people in the community are affected." },
+
+      { category: "Wild Card", grade: "1st Grade", points: 100, type: "mc", question: "What should you do if a headline sounds shocking?", choices: ["Pause and check trusted sources", "Share it instantly", "Add extra guesses", "Change the headline yourself"], answer: "Pause and check trusted sources", explanation: "Shocking headlines can be incomplete or misleading. Checking first is a smart habit." },
+      { category: "Wild Card", grade: "2nd Grade", points: 200, type: "short", question: "What is one question you can ask to decide if news is trustworthy?", answer: "Who made this, what evidence do they show, and do other trusted sources agree?", explanation: "Trustworthy news gives sources, evidence, and clear corrections when needed." },
+      { category: "Wild Card", grade: "3rd Grade", points: 300, type: "mc", question: "A current event has causes and effects. Which is an effect?", choices: ["Something that happens because of the event", "The title of the article", "A person's shoe size", "The page number only"], answer: "Something that happens because of the event", explanation: "A cause explains why something happened. An effect explains what happened next." },
+      { category: "Wild Card", grade: "4th Grade", points: 400, type: "short", question: "Why can a map help students understand a current event?", answer: "A map shows where places are and how location, distance, borders, or resources may matter.", explanation: "Geography can make a news story easier to picture and understand." },
+      { category: "Wild Card", grade: "5th Grade", points: 500, type: "mc", question: "Which student response shows the best current-events thinking?", choices: ["I can explain the issue, name evidence, and consider more than one viewpoint.", "I only read the headline.", "I believe it because it was loud.", "I ignore anything complicated."], answer: "I can explain the issue, name evidence, and consider more than one viewpoint.", explanation: "Strong current-events thinking uses evidence, clear explanations, and fair-minded listening." }
+    ];
+
+    const categories = ["Crime & Justice", "Politics", "Music / Pop Culture", "Sports", "Technology", "Identity & Beliefs", "World News", "U.S. News", "Wild Card"];
+    const grades = [
+      { label: "1st Grade", points: 100 },
+      { label: "2nd Grade", points: 200 },
+      { label: "3rd Grade", points: 300 },
+      { label: "4th Grade", points: 400 },
+      { label: "5th Grade", points: 500 }
+    ];
+
+    const state = {
+      teams: [
+        { name: "Team 1", score: 0, helps: { peek: false, copy: false, save: false } },
+        { name: "Team 2", score: 0, helps: { peek: false, copy: false, save: false } }
+      ],
+      used: new Set(),
+      penaltyOn: false,
+      currentQuestion: null,
+      currentIndex: null,
+      timer: 60,
+      timerId: null,
+      answerShown: false,
+      audioContext: null
+    };
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      renderScoreboards();
+    }
+
+    function startGame() {
+      const team1 = document.getElementById("team1Input").value.trim();
+      const team2 = document.getElementById("team2Input").value.trim();
+      state.teams[0].name = team1 || "Team 1";
+      state.teams[1].name = team2 || "Team 2";
+      renderBoard();
+      showScreen("boardScreen");
+    }
+
+    function renderScoreboards() {
+      const html = `
+        ${teamCard(0)}
+        <div class="game-title-mini">Current Events Edition</div>
+        ${teamCard(1)}
+      `;
+      const boardScoreboard = document.getElementById("scoreboard");
+      const questionScoreboard = document.getElementById("questionScoreboard");
+      if (boardScoreboard) boardScoreboard.innerHTML = html;
+      if (questionScoreboard) questionScoreboard.innerHTML = html;
+    }
+
+    function teamCard(teamIndex) {
+      const team = state.teams[teamIndex];
+      return `
+        <div class="score-card">
+          <div class="team-line">
+            <span class="team-name">${escapeHtml(team.name)}</span>
+            <span class="score">${team.score}</span>
+          </div>
+          <div class="helps">
+            ${helpButton(teamIndex, "peek", "Peek")}
+            ${helpButton(teamIndex, "copy", "Copy")}
+            ${helpButton(teamIndex, "save", "Save")}
+          </div>
+        </div>
+      `;
+    }
+
+    function helpButton(teamIndex, helpKey, label) {
+      const used = state.teams[teamIndex].helps[helpKey];
+      return `<button class="help-btn ${used ? "used" : ""}" ${used ? "disabled" : ""} onclick="useHelp(${teamIndex}, '${helpKey}')">${label}: ${used ? "Used" : "Ready"}</button>`;
+    }
+
+    function renderBoard() {
+      renderScoreboards();
+      document.getElementById("penaltyToggle").textContent = `Wrong answers lose points: ${state.penaltyOn ? "ON" : "OFF"}`;
+      document.getElementById("penaltyToggle").classList.toggle("on", state.penaltyOn);
+      const board = document.getElementById("gameBoard");
+      board.innerHTML = "";
+      categories.forEach(category => {
+        const cell = document.createElement("div");
+        cell.className = "category";
+        cell.textContent = category;
+        board.appendChild(cell);
+      });
+      grades.forEach(grade => {
+        categories.forEach(category => {
+          const index = questionBank.findIndex(q => q.category === category && q.grade === grade.label && q.points === grade.points);
+          const btn = document.createElement("button");
+          btn.className = "point-btn";
+          btn.textContent = grade.points;
+          if (index < 0) {
+            btn.textContent = "?";
+            btn.disabled = true;
+          } else if (state.used.has(index)) {
+            btn.classList.add("used");
+            btn.textContent = "Used";
+            btn.disabled = true;
+          } else {
+            btn.onclick = () => openQuestion(index);
+          }
+          board.appendChild(btn);
+        });
+      });
+    }
+
+    function openQuestion(index) {
+      state.currentIndex = index;
+      state.currentQuestion = questionBank[index];
+      state.answerShown = false;
+      resetTimer();
+      const q = state.currentQuestion;
+      document.getElementById("qCategory").textContent = q.category;
+      document.getElementById("qGrade").textContent = q.grade;
+      document.getElementById("qPoints").textContent = `${q.points} points`;
+      document.getElementById("questionText").textContent = q.question;
+      document.getElementById("message").textContent = "";
+      document.getElementById("answerBox").classList.remove("visible");
+      document.getElementById("showAnswerBtn").style.display = "inline-block";
+      document.getElementById("scoringRow").classList.remove("visible");
+      renderQuestionOptions();
+      showScreen("questionScreen");
+    }
+
+    function renderQuestionOptions(hiddenChoices = []) {
+      const q = state.currentQuestion;
+      const choices = document.getElementById("choices");
+      const shortPrompt = document.getElementById("shortPrompt");
+      choices.innerHTML = "";
+      if (q.type === "mc") {
+        choices.style.display = "grid";
+        shortPrompt.style.display = "none";
+        q.choices.forEach((choice, i) => {
+          const div = document.createElement("div");
+          div.className = `choice ${hiddenChoices.includes(choice) ? "hidden-choice" : ""}`;
+          div.textContent = `${String.fromCharCode(65 + i)}. ${choice}`;
+          choices.appendChild(div);
+        });
+      } else {
+        choices.style.display = "none";
+        shortPrompt.style.display = "block";
+      }
+    }
+
+    function showAnswer() {
+      const q = state.currentQuestion;
+      state.answerShown = true;
+      clearInterval(state.timerId);
+      document.getElementById("answerText").textContent = `Answer: ${q.answer}`;
+      document.getElementById("explanationText").textContent = q.explanation;
+      document.getElementById("answerBox").classList.add("visible");
+      document.getElementById("showAnswerBtn").style.display = "none";
+      renderScoringButtons();
+      playTone("answer");
+    }
+
+    function renderScoringButtons() {
+      const row = document.getElementById("scoringRow");
+      row.innerHTML = `
+        <button class="success" onclick="scoreCorrect(0)">${escapeHtml(state.teams[0].name)} Correct</button>
+        <button class="success" onclick="scoreCorrect(1)">${escapeHtml(state.teams[1].name)} Correct</button>
+        ${state.penaltyOn ? `<button class="danger" onclick="scoreIncorrect(0)">${escapeHtml(state.teams[0].name)} Incorrect</button>` : ""}
+        ${state.penaltyOn ? `<button class="danger" onclick="scoreIncorrect(1)">${escapeHtml(state.teams[1].name)} Incorrect</button>` : ""}
+        <button class="purple" onclick="noPoints()">No Points</button>
+        <button class="neutral" onclick="backToBoard(false)">Back to Board</button>
+      `;
+      row.classList.add("visible");
+    }
+
+    function scoreCorrect(teamIndex) {
+      state.teams[teamIndex].score += state.currentQuestion.points;
+      markUsedAndReturn();
+      playTone("correct");
+    }
+
+    function scoreIncorrect(teamIndex) {
+      state.teams[teamIndex].score -= state.currentQuestion.points;
+      document.getElementById("message").textContent = `${state.teams[teamIndex].name} lost ${state.currentQuestion.points} points.`;
+      renderScoreboards();
+      playTone("wrong");
+    }
+
+    function noPoints() {
+      markUsedAndReturn();
+      playTone("wrong");
+    }
+
+    function markUsedAndReturn() {
+      if (state.currentIndex !== null) state.used.add(state.currentIndex);
+      backToBoard(true);
+    }
+
+    function backToBoard(shouldRender) {
+      clearInterval(state.timerId);
+      if (shouldRender) renderBoard();
+      showScreen("boardScreen");
+    }
+
+    function togglePenalty() {
+      state.penaltyOn = !state.penaltyOn;
+      renderBoard();
+    }
+
+    function useHelp(teamIndex, helpKey) {
+      const team = state.teams[teamIndex];
+      if (team.helps[helpKey]) return;
+      const q = state.currentQuestion;
+      if (helpKey === "peek") {
+        if (!q || q.type !== "mc") {
+          document.getElementById("message").textContent = "Peek only works on multiple choice questions. It was not used.";
+          playTone("wrong");
+          return;
+        }
+        const wrongChoices = q.choices.filter(choice => choice !== q.answer);
+        const hidden = wrongChoices.slice(0, 2);
+        team.helps.peek = true;
+        renderQuestionOptions(hidden);
+        document.getElementById("message").textContent = `${team.name} used Peek: two wrong choices are hidden.`;
+      } else if (helpKey === "copy") {
+        team.helps.copy = true;
+        document.getElementById("message").textContent = `${team.name} used Copy: they may copy the other team's answer.`;
+      } else if (helpKey === "save") {
+        team.helps.save = true;
+        document.getElementById("message").textContent = `${team.name} used Save: they get one second chance.`;
+      }
+      renderScoreboards();
+      playTone("answer");
+    }
+
+    function startTimer() {
+      clearInterval(state.timerId);
+      if (state.timer <= 0) state.timer = 60;
+      updateTimerDisplay();
+      state.timerId = setInterval(() => {
+        state.timer -= 1;
+        updateTimerDisplay();
+        if (state.timer <= 0) {
+          clearInterval(state.timerId);
+          document.getElementById("message").textContent = "Time's up!";
+          playTone("wrong");
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(state.timerId);
+      state.timer = 60;
+      updateTimerDisplay();
+      const message = document.getElementById("message");
+      if (message) message.textContent = "";
+    }
+
+    function updateTimerDisplay() {
+      const display = document.getElementById("timerDisplay");
+      if (!display) return;
+      display.textContent = state.timer;
+      display.classList.toggle("low", state.timer <= 10);
+    }
+
+    function endGame() {
+      clearInterval(state.timerId);
+      const finalScores = document.getElementById("finalScores");
+      finalScores.innerHTML = state.teams.map(team => `
+        <div class="final-score-box">
+          <strong>${escapeHtml(team.name)}</strong>
+          <span>${team.score}</span>
+        </div>
+      `).join("");
+      const winner = document.getElementById("winnerText");
+      if (state.teams[0].score === state.teams[1].score) {
+        winner.textContent = "It's a tie! Great teamwork from both teams!";
+      } else {
+        const winningTeam = state.teams[0].score > state.teams[1].score ? state.teams[0] : state.teams[1];
+        winner.textContent = `${winningTeam.name} wins!`;
+      }
+      showScreen("finalScreen");
+    }
+
+    function playTone(kind) {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        if (!state.audioContext) state.audioContext = new AudioContext();
+        const ctx = state.audioContext;
+        const now = ctx.currentTime;
+        const notes = kind === "correct" ? [523.25, 659.25, 783.99] : kind === "wrong" ? [220, 164.81] : [440, 554.37];
+        notes.forEach((frequency, i) => {
+          const oscillator = ctx.createOscillator();
+          const gain = ctx.createGain();
+          oscillator.type = kind === "wrong" ? "sawtooth" : "triangle";
+          oscillator.frequency.setValueAtTime(frequency, now + i * 0.11);
+          gain.gain.setValueAtTime(0.0001, now + i * 0.11);
+          gain.gain.exponentialRampToValueAtTime(0.16, now + i * 0.11 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.11 + 0.16);
+          oscillator.connect(gain).connect(ctx.destination);
+          oscillator.start(now + i * 0.11);
+          oscillator.stop(now + i * 0.11 + 0.18);
+        });
+      } catch (error) {
+        // Some browsers block sound until a button is clicked. The game still works without audio.
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>'"]/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        '"': "&quot;"
+      }[char]));
+    }
+
+    renderBoard();
+  </script>
+</body>
+</html>
