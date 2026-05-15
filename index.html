@@ -502,6 +502,7 @@
       </div>
       <div id="questionText" class="question-text"></div>
       <div id="choices" class="choices"></div>
+      <div id="shortPrompt" class="short-prompt" style="display:none;">Debate prompt: Students should explain their claim, evidence, and trade-off out loud.</div>
       <div class="timer-row">
         <div id="timerDisplay" class="timer-display">60</div>
         <button class="secondary" onclick="startTimer()">Start 60 Second Timer</button>
@@ -1295,6 +1296,23 @@
         '"': "&quot;"
       }[char]));
     }
+
+    // Expose controls on window so all teacher-clicked buttons work reliably,
+    // including inline handlers and dynamically rendered buttons in local files.
+    Object.assign(window, {
+      showScreen,
+      startGame,
+      togglePenalty,
+      endGame,
+      startTimer,
+      resetTimer,
+      showAnswer,
+      backToBoard,
+      scoreCorrect,
+      scoreIncorrect,
+      noPoints,
+      useHelp
+    });
 
     renderBoard();
   </script>
