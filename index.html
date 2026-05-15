@@ -502,7 +502,6 @@
       </div>
       <div id="questionText" class="question-text"></div>
       <div id="choices" class="choices"></div>
-      <div id="shortPrompt" class="short-prompt" style="display:none;">Short answer: Students should explain their thinking out loud.</div>
       <div class="timer-row">
         <div id="timerDisplay" class="timer-display">60</div>
         <button class="secondary" onclick="startTimer()">Start 60 Second Timer</button>
@@ -514,7 +513,7 @@
         <div id="explanationText" class="explanation"></div>
       </div>
       <div class="button-row">
-        <button id="showAnswerBtn" class="primary" onclick="showAnswer()">Show Answer</button>
+        <button id="showAnswerBtn" class="primary" onclick="showAnswer()">Show Suggested Answer</button>
         <button class="neutral" onclick="backToBoard(false)">Back to Board</button>
       </div>
       <div id="scoringRow" class="scoring-row"></div>
@@ -542,59 +541,446 @@
        Multiple choice questions also need a choices array.
        ============================================================= */
     const questionBank = [
-      { category: "Crime & Justice", grade: "1st Grade", points: 100, type: "mc", question: "What is one safe thing people should do when they see an emergency in public?", choices: ["Call a trusted adult or emergency number", "Run closer to film it", "Spread guesses online", "Ignore everyone nearby"], answer: "Call a trusted adult or emergency number", explanation: "Public safety starts with getting help and staying away from danger." },
-      { category: "Crime & Justice", grade: "2nd Grade", points: 200, type: "short", question: "News stories sometimes say a person is 'accused.' What does that word mean?", answer: "It means someone says the person may have broken a rule or law, but it has not been proven yet.", explanation: "Accused does not mean guilty. Courts and evidence are used to decide what happened." },
-      { category: "Crime & Justice", grade: "3rd Grade", points: 300, type: "mc", question: "Why do many communities discuss body cameras for police officers?", choices: ["To create a record of what happened", "To replace all judges", "To make traffic lights change", "To stop all weather emergencies"], answer: "To create a record of what happened", explanation: "Body cameras can help people review events more clearly, though communities still discuss rules for privacy and use." },
-      { category: "Crime & Justice", grade: "4th Grade", points: 400, type: "short", question: "Why is it important for reporters to check facts before naming someone in a crime story?", answer: "Because wrong information can hurt innocent people and confuse the public.", explanation: "Careful reporting protects fairness and helps readers trust the news." },
-      { category: "Crime & Justice", grade: "5th Grade", points: 500, type: "mc", question: "A city wants safer parks after dark. Which plan balances safety and community trust best?", choices: ["Add lights, community events, and clear reporting options", "Close every park forever", "Post rumors about visitors", "Let only one group use parks"], answer: "Add lights, community events, and clear reporting options", explanation: "Balanced public safety plans try to prevent problems while keeping shared spaces welcoming." },
+      {
+        category: "Crime & Justice",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A neighborhood wants to feel safer at night. Which idea is the most fair starting point?",
+        choices: ["More lighting and youth activities", "More cameras in busy areas", "Earlier curfews for all teens", "More police patrols at night"],
+        answer: "More lighting and youth activities",
+        explanation: "This is a strong answer because it tries to prevent problems without blaming one group. Students may debate when cameras, curfews, or patrols are also useful."
+      },
+      {
+        category: "Crime & Justice",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Some stores lock up common items to stop theft. Is that fair to shoppers? Explain both sides.",
+        answer: "A strong answer names a trade-off: stores want to prevent loss, but shoppers may feel judged, delayed, or less welcome.",
+        explanation: "The best responses do not pretend there is one easy answer. They weigh safety, cost, trust, and respect."
+      },
+      {
+        category: "Crime & Justice",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "A city considers using more public cameras downtown. What is the strongest concern people might raise?",
+        choices: ["Privacy and how the video is used", "Whether cameras cost too much", "Whether cameras actually prevent problems", "Whether signs should warn people"],
+        answer: "Privacy and how the video is used",
+        explanation: "Cameras may help solve problems, but people can reasonably debate who sees the video, how long it is kept, and whether it is used fairly."
+      },
+      {
+        category: "Crime & Justice",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should news reports name a young person accused of a serious rule or law violation? Defend your answer.",
+        answer: "A strong answer explains the conflict between the public's right to know and a young person's chance to grow and be treated fairly.",
+        explanation: "Students can take either side if they use reasons such as safety, privacy, accountability, and second chances."
+      },
+      {
+        category: "Crime & Justice",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A school debates random backpack checks after safety concerns. Which response is the most balanced?",
+        choices: ["Use clear rules, family notice, and checks only when needed", "Search everyone daily to keep rules equal", "Use checks only after a specific concern", "Use metal detectors instead of backpack checks"],
+        answer: "Use clear rules, family notice, and checks only when needed",
+        explanation: "This answer balances safety and rights. Students can debate what 'when needed' should mean."
+      },
 
-      { category: "Politics", grade: "1st Grade", points: 100, type: "mc", question: "What do people usually do in an election?", choices: ["Vote for leaders or ideas", "Measure rainfall", "Buy concert tickets", "Name planets"], answer: "Vote for leaders or ideas", explanation: "Elections are a way for people to choose leaders or decide public questions." },
-      { category: "Politics", grade: "2nd Grade", points: 200, type: "short", question: "Name one reason people should listen respectfully when classmates disagree about an issue.", answer: "Respectful listening helps people learn, solve problems, and keep conversations fair.", explanation: "In a democracy, people often disagree. Respect helps the group make better choices." },
-      { category: "Politics", grade: "3rd Grade", points: 300, type: "mc", question: "Which source is usually best for learning the official rules for voting in your state?", choices: ["The state election office website", "A random meme", "A celebrity fan page", "A mystery text message"], answer: "The state election office website", explanation: "Official election offices publish rules about registration, polling places, and deadlines." },
-      { category: "Politics", grade: "4th Grade", points: 400, type: "short", question: "What is the difference between a fact and an opinion in a political debate?", answer: "A fact can be checked with evidence. An opinion is what someone thinks or believes.", explanation: "Good citizens look for facts while also understanding that people can have different opinions." },
-      { category: "Politics", grade: "5th Grade", points: 500, type: "mc", question: "Why do local elections matter even though national elections get more attention?", choices: ["Local leaders often decide schools, roads, libraries, and safety rules", "Local elections choose movie awards", "They decide every country's laws", "They are only for professional athletes"], answer: "Local leaders often decide schools, roads, libraries, and safety rules", explanation: "Local government decisions can affect daily life very directly." },
+      {
+        category: "Politics",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A city has money for one big project. Which choice is most likely to create debate?",
+        choices: ["Choosing between parks, roads, housing, or libraries", "Choosing the city logo color", "Choosing the meeting room layout", "Choosing a slogan for a city event"],
+        answer: "Choosing between parks, roads, housing, or libraries",
+        explanation: "Public choices create debate because different people need different things."
+      },
+      {
+        category: "Politics",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should voting be easier if that also makes election offices busier? Explain your view.",
+        answer: "A strong answer weighs access for voters against the need for safe, organized, trustworthy elections.",
+        explanation: "Students may support easier voting or tighter systems, but they should explain the trade-off."
+      },
+      {
+        category: "Politics",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "During an election, which question leads to the best debate?",
+        choices: ["Which candidate's plan best solves a real problem?", "Which candidate connects best with voters?", "Which candidate has the most experience?", "Which candidate explains ideas most clearly?"],
+        answer: "Which candidate's plan best solves a real problem?",
+        explanation: "Good debate focuses on plans, evidence, and values, not just popularity or rumors."
+      },
+      {
+        category: "Politics",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should leaders follow what most people want, or protect rights even when a choice is unpopular?",
+        answer: "A strong answer explains that democracy values majority voice, but rights can protect people from unfair treatment.",
+        explanation: "This is debatable because both majority rule and individual rights matter."
+      },
+      {
+        category: "Politics",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A local government wants to limit public comments at meetings so meetings end on time. What is the best compromise?",
+        choices: ["Set fair time limits and offer written comments too", "Give local residents extra speaking time", "Hold separate meetings for big issues", "Use a lottery if too many people sign up"],
+        answer: "Set fair time limits and offer written comments too",
+        explanation: "This protects participation while keeping meetings workable. Students may debate whether time limits are too strict."
+      },
 
-      { category: "Music / Pop Culture", grade: "1st Grade", points: 100, type: "mc", question: "Why might a popular song become part of a current event?", choices: ["Many people talk about it, stream it, or use it in videos", "It changes the weather", "It counts votes", "It builds bridges alone"], answer: "Many people talk about it, stream it, or use it in videos", explanation: "Pop culture can become news when it shapes what many people are discussing or creating." },
-      { category: "Music / Pop Culture", grade: "2nd Grade", points: 200, type: "short", question: "What is one kind way fans can talk about two artists they like?", answer: "They can share what they enjoy without insulting other artists or fans.", explanation: "Kind fan behavior makes pop culture more fun and safer for everyone." },
-      { category: "Music / Pop Culture", grade: "3rd Grade", points: 300, type: "mc", question: "Award shows often include speeches. What can a speech help an artist do?", choices: ["Thank helpers and bring attention to an issue", "Guarantee everyone agrees", "Erase all mistakes", "Make every song free"], answer: "Thank helpers and bring attention to an issue", explanation: "Artists sometimes use public moments to thank others or discuss causes they care about." },
-      { category: "Music / Pop Culture", grade: "4th Grade", points: 400, type: "short", question: "Why should people check whether a celebrity quote online is real before sharing it?", answer: "Fake quotes can spread misinformation and unfairly affect someone's reputation.", explanation: "Checking sources helps stop rumors from becoming bigger problems." },
-      { category: "Music / Pop Culture", grade: "5th Grade", points: 500, type: "mc", question: "A movie becomes popular worldwide. Which question best connects pop culture to current events?", choices: ["What ideas, places, or communities are people discussing because of it?", "How many pencils are in the theater?", "Can it replace every textbook?", "Does every viewer have the same favorite scene?"], answer: "What ideas, places, or communities are people discussing because of it?", explanation: "Pop culture can open conversations about identity, history, technology, and social issues." },
+      {
+        category: "Music / Pop Culture",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A celebrity makes a mistake online and apologizes. What should fans debate?",
+        choices: ["Whether the apology shows learning and repair", "Whether the mistake caused real harm", "Whether time should change how fans respond", "Whether the person's later actions match the apology"],
+        answer: "Whether the apology shows learning and repair",
+        explanation: "People can disagree about forgiveness, but a strong debate looks at actions, harm, and change."
+      },
+      {
+        category: "Music / Pop Culture",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should artists be expected to speak about social issues, or should they just entertain? Explain both sides.",
+        answer: "A strong answer says artists have influence, but they are also people with different roles, knowledge, and boundaries.",
+        explanation: "Students can debate responsibility, free speech, fan expectations, and expertise."
+      },
+      {
+        category: "Music / Pop Culture",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "A song goes viral because of a short video trend. Which question is most worth discussing?",
+        choices: ["Does viral fame help or hurt the meaning of the song?", "Does the trend fairly credit the artist?", "Does the short clip change who hears the song?", "Does the trend make the song more commercial?"],
+        answer: "Does viral fame help or hurt the meaning of the song?",
+        explanation: "Viral trends can help artists reach people, but they can also change how people understand the work."
+      },
+      {
+        category: "Music / Pop Culture",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should old movies or songs with offensive parts be removed, edited, or shown with a warning? Defend one choice.",
+        answer: "A strong answer chooses a position and explains how it balances learning from the past with protecting people from harm.",
+        explanation: "This topic is debatable because history, art, context, and harm all matter."
+      },
+      {
+        category: "Music / Pop Culture",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A fan group tries to 'cancel' a performer after a controversial comment. What is the fairest question to ask first?",
+        choices: ["What was said, what harm happened, and has the person tried to repair it?", "How long ago did the comment happen?", "What do affected people say about it?", "What should fans expect from public figures?"],
+        answer: "What was said, what harm happened, and has the person tried to repair it?",
+        explanation: "A fair response checks facts and considers accountability, context, and repair before judging."
+      },
 
-      { category: "Sports", grade: "1st Grade", points: 100, type: "mc", question: "What is good sportsmanship after a close game?", choices: ["Respecting both teams", "Making fun of the other team", "Refusing to shake hands", "Blaming the weather for everything"], answer: "Respecting both teams", explanation: "Sportsmanship means competing hard while treating others with respect." },
-      { category: "Sports", grade: "2nd Grade", points: 200, type: "short", question: "Why do sports teams practice before big games?", answer: "They practice to build skills, teamwork, and confidence.", explanation: "Preparation helps teams make better decisions under pressure." },
-      { category: "Sports", grade: "3rd Grade", points: 300, type: "mc", question: "Why might a championship game become a major news story?", choices: ["It brings fans together and can affect a city's pride and economy", "It decides school lunch menus everywhere", "It stops all other sports forever", "It changes the alphabet"], answer: "It brings fans together and can affect a city's pride and economy", explanation: "Major sports events can influence travel, business, celebrations, and community identity." },
-      { category: "Sports", grade: "4th Grade", points: 400, type: "short", question: "How can athletes use their fame to help a community?", answer: "They can support charities, encourage healthy habits, visit schools, or speak up for good causes.", explanation: "Public figures can use attention to encourage positive action." },
-      { category: "Sports", grade: "5th Grade", points: 500, type: "mc", question: "A school changes a sports rule to reduce injuries. What is the main trade-off to discuss?", choices: ["How to keep the game fun while protecting players", "How to make uniforms heavier", "How to remove every referee", "How to stop fans from learning rules"], answer: "How to keep the game fun while protecting players", explanation: "Safety rules often try to protect people while keeping the activity fair and enjoyable." },
+      {
+        category: "Sports",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A star player misses school events for travel teams. What is the real debate?",
+        choices: ["Sports opportunity versus school balance", "Individual goals versus team duties", "Travel costs versus family budget", "Training time versus rest and health"],
+        answer: "Sports opportunity versus school balance",
+        explanation: "Students can debate dreams, health, grades, family money, and time."
+      },
+      {
+        category: "Sports",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should athletes be role models even when they did not ask for that job? Explain.",
+        answer: "A strong answer says fame gives influence, but athletes are still people who may make mistakes.",
+        explanation: "Good answers can argue either side using responsibility, privacy, and public attention."
+      },
+      {
+        category: "Sports",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "A league adds a new safety rule that changes how the game is played. What is the strongest debate?",
+        choices: ["Player safety versus keeping the traditional game feel", "Strict rules versus referee judgment", "Fast action versus fewer injuries", "Pro-level rules versus youth-level rules"],
+        answer: "Player safety versus keeping the traditional game feel",
+        explanation: "Safety matters, but fans and players may disagree about how much a sport should change."
+      },
+      {
+        category: "Sports",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should college athletes be paid beyond scholarships? Give one argument for and one against.",
+        answer: "A strong answer notes athletes can bring in money and risk injury, while schools may worry about fairness, budgets, and team balance.",
+        explanation: "This debate has real trade-offs about money, education, work, and fairness."
+      },
+      {
+        category: "Sports",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A city may spend public money on a new stadium. Which question should voters ask first?",
+        choices: ["Will the public benefits be worth the public cost?", "Will jobs from the stadium last long enough?", "Could the money help other public needs?", "Will the team help pay a fair share?"],
+        answer: "Will the public benefits be worth the public cost?",
+        explanation: "Supporters may point to jobs and pride. Critics may point to schools, housing, or roads that also need money."
+      },
 
-      { category: "Technology", grade: "1st Grade", points: 100, type: "mc", question: "What is artificial intelligence, or AI, often used to do?", choices: ["Help computers find patterns or make suggestions", "Grow apples on screens", "Turn desks into boats", "Make gravity disappear"], answer: "Help computers find patterns or make suggestions", explanation: "AI tools use data and instructions to help with tasks like sorting, writing, and predicting." },
-      { category: "Technology", grade: "2nd Grade", points: 200, type: "short", question: "Name one safe habit when using social media or online games.", answer: "Do not share private information, and tell a trusted adult if something feels wrong.", explanation: "Online safety protects your identity, feelings, and family information." },
-      { category: "Technology", grade: "3rd Grade", points: 300, type: "mc", question: "Why are schools discussing rules for AI homework tools?", choices: ["To help students learn honestly and safely", "To ban all pencils", "To make recess shorter everywhere", "To replace teachers with robots tomorrow"], answer: "To help students learn honestly and safely", explanation: "AI can be useful, but schools want students to think, create, and cite help fairly." },
-      { category: "Technology", grade: "4th Grade", points: 400, type: "short", question: "Why should people be careful with deepfake videos or AI-made images?", answer: "They can make fake events look real, so people need to check trusted sources.", explanation: "Digital media can be edited or generated, which makes source checking very important." },
-      { category: "Technology", grade: "5th Grade", points: 500, type: "mc", question: "A city uses sensors to manage traffic lights. What question should citizens ask?", choices: ["How will the data be used and protected?", "Will traffic lights sing every morning?", "Can sensors do homework?", "Will roads become invisible?"], answer: "How will the data be used and protected?", explanation: "Smart technology can help communities, but privacy and fairness should be considered." },
+      {
+        category: "Technology",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A school lets students use AI for brainstorming but not final answers. What is the main idea?",
+        choices: ["Use tools for help, but still do your own thinking", "Allow AI only when students cite it", "Use AI only for grammar and feedback", "Let each teacher set different AI rules"],
+        answer: "Use tools for help, but still do your own thinking",
+        explanation: "This answer keeps the focus on learning. Students can debate where help ends and cheating begins."
+      },
+      {
+        category: "Technology",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should phones be banned during the whole school day or allowed at some times? Explain both sides.",
+        answer: "A strong answer weighs focus and safety against communication, responsibility, and real-life tech habits.",
+        explanation: "There is not one obvious answer because phones can distract students and also be useful."
+      },
+      {
+        category: "Technology",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "A social media app changes its algorithm. Which concern is most important to discuss?",
+        choices: ["What content it pushes and how it affects users", "Whether users can control what they see", "Whether creators are treated fairly", "Whether the app explains the change clearly"],
+        answer: "What content it pushes and how it affects users",
+        explanation: "Algorithms can shape what people see, believe, buy, and feel."
+      },
+      {
+        category: "Technology",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should schools use software that watches student screens? Give a reason for and against.",
+        answer: "A strong answer says monitoring can help safety and focus, but it can also raise privacy and trust concerns.",
+        explanation: "Students should show they understand why adults may want monitoring and why students may object."
+      },
+      {
+        category: "Technology",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A company uses AI to choose who gets a job interview. What is the biggest debate?",
+        choices: ["Speed and efficiency versus bias and fairness", "Privacy versus better job matching", "Human judgment versus computer scoring", "Lower hiring costs versus applicant trust"],
+        answer: "Speed and efficiency versus bias and fairness",
+        explanation: "AI can process many applications, but it may repeat unfair patterns if the data or rules are biased."
+      },
 
-      { category: "Identity & Beliefs", grade: "1st Grade", points: 100, type: "mc", question: "What is a respectful way to learn about a holiday your family does not celebrate?", choices: ["Ask kind questions and listen", "Laugh at it", "Tell people to stop celebrating", "Pretend no one is different"], answer: "Ask kind questions and listen", explanation: "Respectful curiosity helps classmates feel seen and valued." },
-      { category: "Identity & Beliefs", grade: "2nd Grade", points: 200, type: "short", question: "What does community mean?", answer: "A community is a group of people connected by a place, interest, culture, or goal.", explanation: "People can belong to many communities at once, such as school, town, team, or faith group." },
-      { category: "Identity & Beliefs", grade: "3rd Grade", points: 300, type: "mc", question: "Why do news stories sometimes include different viewpoints from the same community?", choices: ["People in one group can still have different experiences and opinions", "Only one person can speak for everyone", "Viewpoints are never important", "It makes maps easier to draw"], answer: "People in one group can still have different experiences and opinions", explanation: "No community is exactly the same inside. Listening to more than one voice gives a fuller picture." },
-      { category: "Identity & Beliefs", grade: "4th Grade", points: 400, type: "short", question: "How can schools make students from many cultures feel welcome?", answer: "They can use respectful names, include many stories, prevent bullying, and invite students to share traditions.", explanation: "Inclusion means people can participate without hiding important parts of who they are." },
-      { category: "Identity & Beliefs", grade: "5th Grade", points: 500, type: "mc", question: "A public debate involves a belief that some people support and others do not. What is a fair discussion rule?", choices: ["Critique ideas without insulting people's identities", "Let the loudest person win", "Ban all questions", "Assume every group thinks the same"], answer: "Critique ideas without insulting people's identities", explanation: "Fair debate focuses on claims and evidence while treating people with dignity." },
+      {
+        category: "Identity & Beliefs",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A classroom discusses a cultural tradition. What is the best debate rule?",
+        choices: ["Ask honest questions without mocking people", "Let people choose what they want to share", "Compare traditions without ranking them", "Use trusted sources before making claims"],
+        answer: "Ask honest questions without mocking people",
+        explanation: "Hard topics can be discussed when people feel respected enough to speak."
+      },
+      {
+        category: "Identity & Beliefs",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should schools change rules for students' religious or cultural clothing? Explain a fair approach.",
+        answer: "A strong answer balances safety and shared rules with respect for identity, belief, and belonging.",
+        explanation: "Students can debate uniforms, fairness, safety, and freedom of expression."
+      },
+      {
+        category: "Identity & Beliefs",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "A town wants a holiday display in a public space. What is the fairest question?",
+        choices: ["How can the space respect different beliefs and non-beliefs?", "Should the display rotate between groups?", "Should the space use only nonreligious symbols?", "Should private groups sponsor their own displays?"],
+        answer: "How can the space respect different beliefs and non-beliefs?",
+        explanation: "Public spaces serve many people, so fairness may require inclusion, rotation, or neutral rules."
+      },
+      {
+        category: "Identity & Beliefs",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "When does a joke about identity become harmful instead of funny? Give a test people could use.",
+        answer: "A strong answer asks who is being targeted, whether the group has less power, and whether people are being invited to laugh or being laughed at.",
+        explanation: "Humor can connect people, but it can also make people feel unsafe or disrespected."
+      },
+      {
+        category: "Identity & Beliefs",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A school club wants to limit membership to students who share an identity. What is the most balanced debate question?",
+        choices: ["Does the limit create safety and support, or unfairly exclude others?", "Can allies support the club in another role?", "Should membership rules depend on the club's purpose?", "How can privacy and access both be respected?"],
+        answer: "Does the limit create safety and support, or unfairly exclude others?",
+        explanation: "Students may disagree because belonging, privacy, support, and equal access all matter."
+      },
 
-      { category: "World News", grade: "1st Grade", points: 100, type: "mc", question: "What is a country?", choices: ["A place with its own government and borders", "A type of sandwich", "A school supply", "A sports whistle"], answer: "A place with its own government and borders", explanation: "World news often compares events in different countries." },
-      { category: "World News", grade: "2nd Grade", points: 200, type: "short", question: "Why might people in one country care about a natural disaster in another country?", answer: "People may want to help, and events can affect families, travel, supplies, and the environment.", explanation: "The world is connected, so big events can matter far beyond one place." },
-      { category: "World News", grade: "3rd Grade", points: 300, type: "mc", question: "When news says countries are negotiating, what are they trying to do?", choices: ["Talk to reach an agreement", "Play a secret video game", "Trade weather", "Erase maps"], answer: "Talk to reach an agreement", explanation: "Negotiation is a peaceful way to solve problems or make plans." },
-      { category: "World News", grade: "4th Grade", points: 400, type: "short", question: "What is one reason people may leave their home country and move somewhere safer?", answer: "They may leave because of conflict, disasters, lack of jobs, or danger to their rights.", explanation: "Migration stories often involve difficult choices and hopes for safety and opportunity." },
-      { category: "World News", grade: "5th Grade", points: 500, type: "mc", question: "Why do world leaders meet at climate conferences?", choices: ["To discuss shared plans for pollution, energy, and extreme weather", "To choose every country's favorite color", "To cancel all seasons", "To make oceans smaller overnight"], answer: "To discuss shared plans for pollution, energy, and extreme weather", explanation: "Climate issues cross borders, so countries often need to cooperate." },
+      {
+        category: "World News",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "Two countries disagree over water from the same river. What makes the issue hard?",
+        choices: ["Both sides may need the water", "One side may live upstream", "Farms, cities, and wildlife may compete", "Climate or drought may make less water available"],
+        answer: "Both sides may need the water",
+        explanation: "Shared resources can create debate because each side may have real needs."
+      },
+      {
+        category: "World News",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should countries accept more people fleeing danger if it costs money and planning? Explain both sides.",
+        answer: "A strong answer weighs human safety and compassion against housing, jobs, schools, and local resources.",
+        explanation: "Migration debates are strongest when students consider both people in danger and communities receiving them."
+      },
+      {
+        category: "World News",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "When countries disagree, why might negotiation be better than threats?",
+        choices: ["It can protect people while looking for a deal", "It may leave both sides partly unhappy", "It can take longer than quick action", "It may need help from other countries"],
+        answer: "It can protect people while looking for a deal",
+        explanation: "Negotiation is not perfect, but it can reduce harm and create choices besides conflict."
+      },
+      {
+        category: "World News",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should rich countries pay more to help poorer countries handle climate disasters? Defend your answer.",
+        answer: "A strong answer discusses responsibility, ability to pay, fairness, and how climate problems cross borders.",
+        explanation: "Students can argue different positions if they explain what fairness means to them."
+      },
+      {
+        category: "World News",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A country limits internet access during protests. What is the biggest debate?",
+        choices: ["Public safety claims versus free speech and information", "Government control versus public trust", "Stopping rumors versus blocking real news", "Short emergency limits versus long-term censorship"],
+        answer: "Public safety claims versus free speech and information",
+        explanation: "Governments may claim safety reasons, while critics may argue people need communication and press freedom."
+      },
 
-      { category: "U.S. News", grade: "1st Grade", points: 100, type: "mc", question: "Which level of government is closest to most people's daily life?", choices: ["Local government", "A moon colony", "A movie studio", "A distant volcano"], answer: "Local government", explanation: "Local government works on things like schools, roads, parks, and libraries." },
-      { category: "U.S. News", grade: "2nd Grade", points: 200, type: "short", question: "Name one service that taxes can help pay for in a community.", answer: "Taxes can help pay for schools, roads, firefighters, libraries, parks, or public health services.", explanation: "Taxes are one way communities pay for shared needs." },
-      { category: "U.S. News", grade: "3rd Grade", points: 300, type: "mc", question: "Why do weather alerts matter during storms, floods, or heat waves?", choices: ["They help people prepare and stay safe", "They pick sports winners", "They sell movie tickets", "They make homework vanish"], answer: "They help people prepare and stay safe", explanation: "Alerts can tell people when to seek shelter, cool down, or avoid dangerous roads." },
-      { category: "U.S. News", grade: "4th Grade", points: 400, type: "short", question: "Why might a school board meeting be covered in local news?", answer: "School boards make decisions about budgets, calendars, rules, books, and programs that affect students.", explanation: "Local news helps families understand decisions that affect their schools." },
-      { category: "U.S. News", grade: "5th Grade", points: 500, type: "mc", question: "A state debates a new public health rule. Which evidence would be most useful?", choices: ["Data from doctors, scientists, and community needs", "Only the funniest comment online", "A rumor from one person", "A random sports score"], answer: "Data from doctors, scientists, and community needs", explanation: "Public health decisions should consider expert evidence and how people in the community are affected." },
+      {
+        category: "U.S. News",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A city changes bus routes to save money. Who might disagree?",
+        choices: ["People who rely on buses and people worried about taxes", "Workers who need early routes and drivers who want shorter shifts", "Students who ride buses and neighborhoods with less service", "Business owners and people who need affordable transportation"],
+        answer: "People who rely on buses and people worried about taxes",
+        explanation: "Budget choices can affect people in different ways."
+      },
+      {
+        category: "U.S. News",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should schools have stricter attendance rules if some students have hard life situations? Explain.",
+        answer: "A strong answer weighs learning time and responsibility against transportation, health, work, family, and housing challenges.",
+        explanation: "This is debatable because schools need expectations, but students may need support, too."
+      },
+      {
+        category: "U.S. News",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "A town may build more housing, but some neighbors worry about traffic. What is the key debate?",
+        choices: ["More homes and affordability versus crowding and planning", "Apartment buildings versus single-family homes", "New neighbors versus pressure on schools and roads", "Fast building versus careful environmental review"],
+        answer: "More homes and affordability versus crowding and planning",
+        explanation: "Housing debates often include cost, fairness, neighborhood change, and services."
+      },
+      {
+        category: "U.S. News",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should public schools offer free meals to all students, even families who can pay? Give both sides.",
+        answer: "A strong answer says universal meals can reduce hunger and shame, while critics may worry about cost and who should pay.",
+        explanation: "Students should connect the issue to health, learning, dignity, budgets, and fairness."
+      },
+      {
+        category: "U.S. News",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A state considers raising the minimum wage. What trade-off is most important?",
+        choices: ["Higher worker pay versus possible costs for businesses and prices", "Helping workers now versus possible fewer entry-level jobs", "Local living costs versus one statewide rule", "Big companies versus small business budgets"],
+        answer: "Higher worker pay versus possible costs for businesses and prices",
+        explanation: "Supporters focus on living costs and fairness. Critics may worry about small businesses, prices, or fewer jobs."
+      },
 
-      { category: "Wild Card", grade: "1st Grade", points: 100, type: "mc", question: "What should you do if a headline sounds shocking?", choices: ["Pause and check trusted sources", "Share it instantly", "Add extra guesses", "Change the headline yourself"], answer: "Pause and check trusted sources", explanation: "Shocking headlines can be incomplete or misleading. Checking first is a smart habit." },
-      { category: "Wild Card", grade: "2nd Grade", points: 200, type: "short", question: "What is one question you can ask to decide if news is trustworthy?", answer: "Who made this, what evidence do they show, and do other trusted sources agree?", explanation: "Trustworthy news gives sources, evidence, and clear corrections when needed." },
-      { category: "Wild Card", grade: "3rd Grade", points: 300, type: "mc", question: "A current event has causes and effects. Which is an effect?", choices: ["Something that happens because of the event", "The title of the article", "A person's shoe size", "The page number only"], answer: "Something that happens because of the event", explanation: "A cause explains why something happened. An effect explains what happened next." },
-      { category: "Wild Card", grade: "4th Grade", points: 400, type: "short", question: "Why can a map help students understand a current event?", answer: "A map shows where places are and how location, distance, borders, or resources may matter.", explanation: "Geography can make a news story easier to picture and understand." },
-      { category: "Wild Card", grade: "5th Grade", points: 500, type: "mc", question: "Which student response shows the best current-events thinking?", choices: ["I can explain the issue, name evidence, and consider more than one viewpoint.", "I only read the headline.", "I believe it because it was loud.", "I ignore anything complicated."], answer: "I can explain the issue, name evidence, and consider more than one viewpoint.", explanation: "Strong current-events thinking uses evidence, clear explanations, and fair-minded listening." }
+      {
+        category: "Wild Card",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A headline makes you angry right away. What is the smartest first move?",
+        choices: ["Pause, check the source, and ask what is missing", "Look for the same story in another trusted place", "Read beyond the headline before reacting", "Ask who benefits if people get angry"],
+        answer: "Pause, check the source, and ask what is missing",
+        explanation: "Strong debate starts with facts, not just feelings."
+      },
+      {
+        category: "Wild Card",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "What makes a debate better: trying to win, or trying to understand? Defend your answer.",
+        answer: "A strong answer explains that winning can motivate people, but understanding helps people learn and solve real problems.",
+        explanation: "Students can choose either side if they explain how a good discussion should work."
+      },
+      {
+        category: "Wild Card",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "Which sentence shows the strongest debate skill?",
+        choices: ["I disagree because the evidence could also mean something else.", "I see your point, but I weigh the trade-off differently.", "What evidence would change your mind?", "Can we define the problem before arguing solutions?"],
+        answer: "I disagree because the evidence could also mean something else.",
+        explanation: "Good debate challenges ideas with reasons instead of attacking people."
+      },
+      {
+        category: "Wild Card",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Pick one current issue and explain what two reasonable people might disagree about.",
+        answer: "A strong answer names the issue, gives both sides fairly, and explains the value or concern behind each side.",
+        explanation: "The goal is not to agree with both sides. The goal is to understand why the disagreement exists."
+      },
+      {
+        category: "Wild Card",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "Which answer should earn points in a debatable question?",
+        choices: ["A clear claim with evidence, a trade-off, and respect for another view", "A personal story connected to a bigger pattern", "A solution that names who benefits and who pays", "A response that admits what it does not know yet"],
+        answer: "A clear claim with evidence, a trade-off, and respect for another view",
+        explanation: "Debatable does not mean anything goes. Strong answers still need reasons, evidence, and respect."
+      }
     ];
 
     const categories = ["Crime & Justice", "Politics", "Music / Pop Culture", "Sports", "Technology", "Identity & Beliefs", "World News", "U.S. News", "Wild Card"];
@@ -745,7 +1131,7 @@
       const q = state.currentQuestion;
       state.answerShown = true;
       clearInterval(state.timerId);
-      document.getElementById("answerText").textContent = `Answer: ${q.answer}`;
+      document.getElementById("answerText").textContent = `Suggested answer: ${q.answer}`;
       document.getElementById("explanationText").textContent = q.explanation;
       document.getElementById("answerBox").classList.add("visible");
       document.getElementById("showAnswerBtn").style.display = "none";
