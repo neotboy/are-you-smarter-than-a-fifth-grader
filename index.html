@@ -497,7 +497,7 @@
             <input id="team2Input" maxlength="24" placeholder="Team 2" />
           </div>
         </div>
-        <button id="startGameBtn" class="primary" type="button">Start Game</button>
+        <button class="primary" onclick="startGame()">Start Game</button>
       </div>
     </div>
   </section>
@@ -505,8 +505,8 @@
   <section id="boardScreen" class="screen">
     <div id="scoreboard" class="topbar"></div>
     <div class="board-tools">
-      <button id="penaltyToggle" class="toggle" type="button">Wrong answers lose points: OFF</button>
-      <button id="endGameBtn" class="danger" type="button">End Game</button>
+      <button id="penaltyToggle" class="toggle" onclick="togglePenalty()">Wrong answers lose points: OFF</button>
+      <button class="danger" onclick="endGame()">End Game</button>
     </div>
     <div class="board-wrap">
       <div id="gameBoard" class="game-board"></div>
@@ -526,8 +526,8 @@
       <div id="shortPrompt" class="short-prompt" style="display:none;">Debate prompt: Students should explain their claim, evidence, and trade-off out loud.</div>
       <div class="timer-row">
         <div id="timerDisplay" class="timer-display">60</div>
-        <button id="startTimerBtn" class="secondary" type="button">Start 60 Second Timer</button>
-        <button id="resetTimerBtn" class="neutral" type="button">Reset Timer</button>
+        <button class="secondary" onclick="startTimer()">Start 60 Second Timer</button>
+        <button class="neutral" onclick="resetTimer()">Reset Timer</button>
       </div>
       <div id="message" class="message"></div>
       <div id="answerBox" class="answer-box">
@@ -535,8 +535,8 @@
         <div id="explanationText" class="explanation"></div>
       </div>
       <div class="button-row">
-        <button id="showAnswerBtn" class="primary" type="button">Show Suggested Answer</button>
-        <button id="questionBackBtn" class="neutral" type="button">Back to Board</button>
+        <button id="showAnswerBtn" class="primary" onclick="showAnswer()">Show Suggested Answer</button>
+        <button class="neutral" onclick="backToBoard(false)">Back to Board</button>
       </div>
       <div id="scoringRow" class="scoring-row"></div>
     </div>
@@ -550,7 +550,7 @@
         <div id="finalScores" class="final-scores"></div>
         <div id="winnerText" class="winner"></div>
         <div class="reflection">What current event did you understand better today? Explain why it matters.</div>
-        <button id="finalBackBtn" class="primary" type="button">Return to Board</button>
+        <button class="primary" onclick="showScreen('boardScreen')">Return to Board</button>
       </div>
     </div>
   </section>
@@ -1019,7 +1019,7 @@
         { name: "Team 1", score: 0, helps: { peek: false, copy: false, save: false } },
         { name: "Team 2", score: 0, helps: { peek: false, copy: false, save: false } }
       ],
-      used: [],
+      used: new Set(),
       penaltyOn: false,
       currentQuestion: null,
       currentIndex: null,
@@ -1032,8 +1032,7 @@
     };
 
     function showScreen(id) {
-      const screens = document.querySelectorAll(".screen");
-      for (let i = 0; i < screens.length; i += 1) screens[i].classList.remove("active");
+      document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
       document.getElementById(id).classList.add("active");
       renderScoreboards();
     }
@@ -1102,7 +1101,7 @@
           if (index < 0) {
             btn.textContent = "?";
             btn.disabled = true;
-          } else if (state.used.indexOf(index) !== -1) {
+          } else if (state.used.has(index)) {
             btn.classList.add("used");
             btn.textContent = "Used";
             btn.disabled = true;
@@ -1135,6 +1134,7 @@
     }
 
     function renderQuestionOptions(hiddenChoices = state.hiddenChoices) {
+    function renderQuestionOptions(hiddenChoices = []) {
       const q = state.currentQuestion;
       const choices = document.getElementById("choices");
       const shortPrompt = document.getElementById("shortPrompt");
@@ -1144,7 +1144,7 @@
         shortPrompt.style.display = "none";
         q.choices.forEach((choice, i) => {
           const btn = document.createElement("button");
-          const isHidden = hiddenChoices.indexOf(choice) !== -1;
+          const isHidden = hiddenChoices.includes(choice);
           const isSelected = state.selectedChoice === choice;
           const isCorrect = state.answerShown && choice === q.answer;
           const isIncorrect = state.answerShown && isSelected && choice !== q.answer;
@@ -1154,6 +1154,10 @@
           btn.disabled = isHidden;
           btn.onclick = () => selectChoice(choice);
           choices.appendChild(btn);
+          const div = document.createElement("div");
+          div.className = `choice ${hiddenChoices.includes(choice) ? "hidden-choice" : ""}`;
+          div.textContent = `${String.fromCharCode(65 + i)}. ${choice}`;
+          choices.appendChild(div);
         });
       } else {
         choices.style.display = "none";
@@ -1163,7 +1167,7 @@
 
     function selectChoice(choice) {
       if (!state.currentQuestion || state.currentQuestion.type !== "mc" || state.answerShown) return;
-      if (state.hiddenChoices.indexOf(choice) !== -1) return;
+      if (state.hiddenChoices.includes(choice)) return;
       state.selectedChoice = choice;
       renderQuestionOptions();
       document.getElementById("message").textContent = `Selected: ${choice}. Click Show Suggested Answer when ready.`;
@@ -1215,7 +1219,7 @@
     }
 
     function markUsedAndReturn() {
-      if (state.currentIndex !== null && state.used.indexOf(state.currentIndex) === -1) state.used.push(state.currentIndex);
+      if (state.currentIndex !== null) state.used.add(state.currentIndex);
       backToBoard(true);
     }
 
@@ -1242,9 +1246,12 @@
         }
         const wrongChoices = q.choices.filter(choice => choice !== q.answer);
         state.hiddenChoices = wrongChoices.slice(0, 2);
-        if (state.hiddenChoices.indexOf(state.selectedChoice) !== -1) state.selectedChoice = null;
+        if (state.hiddenChoices.includes(state.selectedChoice)) state.selectedChoice = null;
         team.helps.peek = true;
         renderQuestionOptions();
+        const hidden = wrongChoices.slice(0, 2);
+        team.helps.peek = true;
+        renderQuestionOptions(hidden);
         document.getElementById("message").textContent = `${team.name} used Peek: two wrong choices are hidden.`;
       } else if (helpKey === "copy") {
         team.helps.copy = true;
@@ -1331,30 +1338,6 @@
       }
     }
 
-
-    function wireStaticButtons() {
-      const handlers = {
-        startGameBtn: startGame,
-        penaltyToggle: togglePenalty,
-        endGameBtn: endGame,
-        startTimerBtn: startTimer,
-        resetTimerBtn: resetTimer,
-        showAnswerBtn: showAnswer,
-        questionBackBtn: () => backToBoard(false),
-        finalBackBtn: () => showScreen("boardScreen")
-      };
-      for (const id in handlers) {
-        if (!Object.prototype.hasOwnProperty.call(handlers, id)) continue;
-        const button = document.getElementById(id);
-        if (button) {
-          button.onclick = event => {
-            if (event && event.preventDefault) event.preventDefault();
-            handlers[id]();
-          };
-        }
-      }
-    }
-
     function escapeHtml(value) {
       return String(value).replace(/[&<>'"]/g, char => ({
         "&": "&amp;",
@@ -1367,21 +1350,22 @@
 
     // Expose controls on window so all teacher-clicked buttons work reliably,
     // including inline handlers and dynamically rendered buttons in local files.
-    window.showScreen = showScreen;
-    window.startGame = startGame;
-    window.togglePenalty = togglePenalty;
-    window.endGame = endGame;
-    window.startTimer = startTimer;
-    window.resetTimer = resetTimer;
-    window.showAnswer = showAnswer;
-    window.selectChoice = selectChoice;
-    window.backToBoard = backToBoard;
-    window.scoreCorrect = scoreCorrect;
-    window.scoreIncorrect = scoreIncorrect;
-    window.noPoints = noPoints;
-    window.useHelp = useHelp;
+    Object.assign(window, {
+      showScreen,
+      startGame,
+      togglePenalty,
+      endGame,
+      startTimer,
+      resetTimer,
+      showAnswer,
+      selectChoice,
+      backToBoard,
+      scoreCorrect,
+      scoreIncorrect,
+      noPoints,
+      useHelp
+    });
 
-    wireStaticButtons();
     renderBoard();
   </script>
 </body>
