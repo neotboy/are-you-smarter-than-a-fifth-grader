@@ -497,7 +497,7 @@
             <input id="team2Input" maxlength="24" placeholder="Team 2" />
           </div>
         </div>
-        <button id="startGameBtn" class="primary" type="button">Start Game</button>
+        <button class="primary" onclick="startGame()">Start Game</button>
       </div>
     </div>
   </section>
@@ -505,8 +505,8 @@
   <section id="boardScreen" class="screen">
     <div id="scoreboard" class="topbar"></div>
     <div class="board-tools">
-      <button id="penaltyToggle" class="toggle" type="button">Wrong answers lose points: OFF</button>
-      <button id="endGameBtn" class="danger" type="button">End Game</button>
+      <button id="penaltyToggle" class="toggle" onclick="togglePenalty()">Wrong answers lose points: OFF</button>
+      <button class="danger" onclick="endGame()">End Game</button>
     </div>
     <div class="board-wrap">
       <div id="gameBoard" class="game-board"></div>
@@ -526,8 +526,8 @@
       <div id="shortPrompt" class="short-prompt" style="display:none;">Debate prompt: Students should explain their claim, evidence, and trade-off out loud.</div>
       <div class="timer-row">
         <div id="timerDisplay" class="timer-display">60</div>
-        <button id="startTimerBtn" class="secondary" type="button">Start 60 Second Timer</button>
-        <button id="resetTimerBtn" class="neutral" type="button">Reset Timer</button>
+        <button class="secondary" onclick="startTimer()">Start 60 Second Timer</button>
+        <button class="neutral" onclick="resetTimer()">Reset Timer</button>
       </div>
       <div id="message" class="message"></div>
       <div id="answerBox" class="answer-box">
@@ -535,8 +535,8 @@
         <div id="explanationText" class="explanation"></div>
       </div>
       <div class="button-row">
-        <button id="showAnswerBtn" class="primary" type="button">Show Suggested Answer</button>
-        <button id="questionBackBtn" class="neutral" type="button">Back to Board</button>
+        <button id="showAnswerBtn" class="primary" onclick="showAnswer()">Show Suggested Answer</button>
+        <button class="neutral" onclick="backToBoard(false)">Back to Board</button>
       </div>
       <div id="scoringRow" class="scoring-row"></div>
     </div>
@@ -550,7 +550,7 @@
         <div id="finalScores" class="final-scores"></div>
         <div id="winnerText" class="winner"></div>
         <div class="reflection">What current event did you understand better today? Explain why it matters.</div>
-        <button id="finalBackBtn" class="primary" type="button">Return to Board</button>
+        <button class="primary" onclick="showScreen('boardScreen')">Return to Board</button>
       </div>
     </div>
   </section>
@@ -1134,6 +1134,7 @@
     }
 
     function renderQuestionOptions(hiddenChoices = state.hiddenChoices) {
+    function renderQuestionOptions(hiddenChoices = []) {
       const q = state.currentQuestion;
       const choices = document.getElementById("choices");
       const shortPrompt = document.getElementById("shortPrompt");
@@ -1153,6 +1154,10 @@
           btn.disabled = isHidden;
           btn.onclick = () => selectChoice(choice);
           choices.appendChild(btn);
+          const div = document.createElement("div");
+          div.className = `choice ${hiddenChoices.includes(choice) ? "hidden-choice" : ""}`;
+          div.textContent = `${String.fromCharCode(65 + i)}. ${choice}`;
+          choices.appendChild(div);
         });
       } else {
         choices.style.display = "none";
@@ -1244,6 +1249,9 @@
         if (state.hiddenChoices.includes(state.selectedChoice)) state.selectedChoice = null;
         team.helps.peek = true;
         renderQuestionOptions();
+        const hidden = wrongChoices.slice(0, 2);
+        team.helps.peek = true;
+        renderQuestionOptions(hidden);
         document.getElementById("message").textContent = `${team.name} used Peek: two wrong choices are hidden.`;
       } else if (helpKey === "copy") {
         team.helps.copy = true;
@@ -1330,27 +1338,6 @@
       }
     }
 
-
-    function wireStaticButtons() {
-      const handlers = {
-        startGameBtn: startGame,
-        penaltyToggle: togglePenalty,
-        endGameBtn: endGame,
-        startTimerBtn: startTimer,
-        resetTimerBtn: resetTimer,
-        showAnswerBtn: showAnswer,
-        questionBackBtn: () => backToBoard(false),
-        finalBackBtn: () => showScreen("boardScreen")
-      };
-      Object.entries(handlers).forEach(([id, handler]) => {
-        const button = document.getElementById(id);
-        if (button) button.addEventListener("click", event => {
-          event.preventDefault();
-          handler();
-        });
-      });
-    }
-
     function escapeHtml(value) {
       return String(value).replace(/[&<>'"]/g, char => ({
         "&": "&amp;",
@@ -1379,7 +1366,6 @@
       useHelp
     });
 
-    wireStaticButtons();
     renderBoard();
   </script>
 </body>
