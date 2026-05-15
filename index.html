@@ -349,6 +349,27 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      width: 100%;
+      text-align: left;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.14), var(--soft-shadow);
+    }
+
+    .choice.selected-choice {
+      border-color: var(--orange);
+      background: linear-gradient(135deg, #fff7ed, #fed7aa);
+      transform: translateY(-2px) scale(1.01);
+    }
+
+    .choice.correct-choice {
+      border-color: #16a34a;
+      background: linear-gradient(135deg, #dcfce7, #86efac);
+      color: #052e16;
+    }
+
+    .choice.incorrect-choice {
+      border-color: var(--red);
+      background: linear-gradient(135deg, #ffe4e6, #fda4af);
+      color: #7f1d1d;
     }
 
     .choice.hidden-choice {
@@ -1002,6 +1023,8 @@
       penaltyOn: false,
       currentQuestion: null,
       currentIndex: null,
+      selectedChoice: null,
+      hiddenChoices: [],
       timer: 60,
       timerId: null,
       answerShown: false,
@@ -1094,6 +1117,8 @@
       state.currentIndex = index;
       state.currentQuestion = questionBank[index];
       state.answerShown = false;
+      state.selectedChoice = null;
+      state.hiddenChoices = [];
       resetTimer();
       const q = state.currentQuestion;
       document.getElementById("qCategory").textContent = q.category;
@@ -1108,6 +1133,7 @@
       showScreen("questionScreen");
     }
 
+    function renderQuestionOptions(hiddenChoices = state.hiddenChoices) {
     function renderQuestionOptions(hiddenChoices = []) {
       const q = state.currentQuestion;
       const choices = document.getElementById("choices");
@@ -1117,6 +1143,17 @@
         choices.style.display = "grid";
         shortPrompt.style.display = "none";
         q.choices.forEach((choice, i) => {
+          const btn = document.createElement("button");
+          const isHidden = hiddenChoices.includes(choice);
+          const isSelected = state.selectedChoice === choice;
+          const isCorrect = state.answerShown && choice === q.answer;
+          const isIncorrect = state.answerShown && isSelected && choice !== q.answer;
+          btn.type = "button";
+          btn.className = `choice ${isHidden ? "hidden-choice" : ""} ${isSelected ? "selected-choice" : ""} ${isCorrect ? "correct-choice" : ""} ${isIncorrect ? "incorrect-choice" : ""}`;
+          btn.textContent = `${String.fromCharCode(65 + i)}. ${choice}`;
+          btn.disabled = isHidden;
+          btn.onclick = () => selectChoice(choice);
+          choices.appendChild(btn);
           const div = document.createElement("div");
           div.className = `choice ${hiddenChoices.includes(choice) ? "hidden-choice" : ""}`;
           div.textContent = `${String.fromCharCode(65 + i)}. ${choice}`;
@@ -1128,6 +1165,15 @@
       }
     }
 
+    function selectChoice(choice) {
+      if (!state.currentQuestion || state.currentQuestion.type !== "mc" || state.answerShown) return;
+      if (state.hiddenChoices.includes(choice)) return;
+      state.selectedChoice = choice;
+      renderQuestionOptions();
+      document.getElementById("message").textContent = `Selected: ${choice}. Click Show Suggested Answer when ready.`;
+      playTone("answer");
+    }
+
     function showAnswer() {
       const q = state.currentQuestion;
       state.answerShown = true;
@@ -1136,6 +1182,7 @@
       document.getElementById("explanationText").textContent = q.explanation;
       document.getElementById("answerBox").classList.add("visible");
       document.getElementById("showAnswerBtn").style.display = "none";
+      renderQuestionOptions();
       renderScoringButtons();
       playTone("answer");
     }
@@ -1198,6 +1245,10 @@
           return;
         }
         const wrongChoices = q.choices.filter(choice => choice !== q.answer);
+        state.hiddenChoices = wrongChoices.slice(0, 2);
+        if (state.hiddenChoices.includes(state.selectedChoice)) state.selectedChoice = null;
+        team.helps.peek = true;
+        renderQuestionOptions();
         const hidden = wrongChoices.slice(0, 2);
         team.helps.peek = true;
         renderQuestionOptions(hidden);
@@ -1307,6 +1358,7 @@
       startTimer,
       resetTimer,
       showAnswer,
+      selectChoice,
       backToBoard,
       scoreCorrect,
       scoreIncorrect,
