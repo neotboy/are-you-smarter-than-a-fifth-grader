@@ -1134,6 +1134,7 @@
     }
 
     function renderQuestionOptions(hiddenChoices = state.hiddenChoices) {
+    function renderQuestionOptions(hiddenChoices = []) {
       const q = state.currentQuestion;
       const choices = document.getElementById("choices");
       const shortPrompt = document.getElementById("shortPrompt");
@@ -1153,6 +1154,10 @@
           btn.disabled = isHidden;
           btn.onclick = () => selectChoice(choice);
           choices.appendChild(btn);
+          const div = document.createElement("div");
+          div.className = `choice ${hiddenChoices.includes(choice) ? "hidden-choice" : ""}`;
+          div.textContent = `${String.fromCharCode(65 + i)}. ${choice}`;
+          choices.appendChild(div);
         });
       } else {
         choices.style.display = "none";
@@ -1244,6 +1249,9 @@
         if (state.hiddenChoices.includes(state.selectedChoice)) state.selectedChoice = null;
         team.helps.peek = true;
         renderQuestionOptions();
+        const hidden = wrongChoices.slice(0, 2);
+        team.helps.peek = true;
+        renderQuestionOptions(hidden);
         document.getElementById("message").textContent = `${team.name} used Peek: two wrong choices are hidden.`;
       } else if (helpKey === "copy") {
         team.helps.copy = true;
