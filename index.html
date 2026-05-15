@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Are You Smarter Than a 5th Grader? — Current Events Edition</title>
+  <style>
+    :root {
+      --navy: #101a4d;
+      --blue: #2257ff;
+      --sky: #35c6ff;
+      --yellow: #ffd84d;
+      --orange: #ff8a3d;
+      --pink: #ff4fa3;
+      --green: #39d98a;
+      --red: #ff4d5e;
+      --purple: #8c5cff;
+      --white: #fffaf0;
+      --ink: #14213d;
+      --muted: #7c8499;
+      --gray: #d7dbe8;
+      --shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+      --soft-shadow: 0 10px 24px rgba(16, 26, 77, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255, 216, 77, 0.45), transparent 28%),
+        radial-gradient(circle at 85% 18%, rgba(255, 79, 163, 0.35), transparent 30%),
+        radial-gradient(circle at 50% 95%, rgba(53, 198, 255, 0.38), transparent 38%),
+        linear-gradient(135deg, #101a4d 0%, #24318a 45%, #1164b8 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(45deg, rgba(255,255,255,0.07) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255,255,255,0.07) 25%, transparent 25%);
+      background-size: 70px 70px;
+      opacity: 0.45;
+    }
+
+    button, input { font: inherit; }
+
+    button {
+      border: 0;
+      border-radius: 18px;
+      padding: 14px 20px;
+      cursor: pointer;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+      box-shadow: 0 7px 0 rgba(0,0,0,0.22), var(--soft-shadow);
+    }
+
+    button:hover:not(:disabled) { transform: translateY(-2px) scale(1.02); filter: brightness(1.04); }
+    button:active:not(:disabled) { transform: translateY(3px) scale(0.99); box-shadow: 0 3px 0 rgba(0,0,0,0.25), var(--soft-shadow); }
+    button:disabled { cursor: not-allowed; filter: grayscale(0.7); opacity: 0.65; box-shadow: none; }
+
+    .screen { display: none; min-height: 100vh; padding: 20px; position: relative; z-index: 1; }
+    .screen.active { display: block; animation: popIn 0.35s ease both; }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(14px) scale(0.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes sparkle {
+      0%, 100% { transform: rotate(-2deg) scale(1); }
+      50% { transform: rotate(2deg) scale(1.035); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 216, 77, 0.65), var(--shadow); }
+      50% { box-shadow: 0 0 0 12px rgba(255, 216, 77, 0), var(--shadow); }
+    }
+
+    .title-wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      min-height: calc(100vh - 40px);
+      display: grid;
+      place-items: center;
+    }
+
+    .title-card, .question-card, .final-card {
+      width: min(1120px, 100%);
+      background: rgba(255, 250, 240, 0.96);
+      border: 6px solid var(--yellow);
+      border-radius: 34px;
+      box-shadow: var(--shadow);
+      padding: clamp(22px, 4vw, 46px);
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--pink), var(--orange));
+      color: white;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: clamp(1rem, 1.7vw, 1.45rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      box-shadow: var(--soft-shadow);
+    }
+
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(2.4rem, 7vw, 6.4rem);
+      line-height: 0.95;
+      color: var(--navy);
+      text-shadow: 4px 4px 0 var(--yellow), 8px 8px 0 rgba(34, 87, 255, 0.16);
+      animation: sparkle 3.2s ease-in-out infinite;
+    }
+
+    h2 { margin: 0; font-size: clamp(1.7rem, 3.5vw, 3.2rem); }
+    h3 { margin: 0; font-size: clamp(1.3rem, 2.4vw, 2.2rem); }
+
+    .subtitle {
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+      font-weight: 800;
+      color: #35406f;
+      margin-bottom: 24px;
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(230px, 1fr));
+      gap: 18px;
+      margin: 28px 0;
+      text-align: left;
+    }
+
+    label { display: block; font-weight: 900; font-size: 1.25rem; margin-bottom: 8px; }
+
+    input {
+      width: 100%;
+      border: 4px solid #c7d2fe;
+      border-radius: 18px;
+      padding: 16px 18px;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--navy);
+      outline: none;
+      background: white;
+    }
+
+    input:focus { border-color: var(--pink); box-shadow: 0 0 0 5px rgba(255, 79, 163, 0.18); }
+
+    .primary { background: linear-gradient(135deg, var(--yellow), #ffb703); color: var(--navy); font-size: clamp(1.25rem, 2vw, 1.7rem); }
+    .secondary { background: linear-gradient(135deg, var(--sky), var(--blue)); color: white; }
+    .danger { background: linear-gradient(135deg, var(--red), #b5172f); color: white; }
+    .success { background: linear-gradient(135deg, var(--green), #0aa36d); color: #062b1d; }
+    .neutral { background: linear-gradient(135deg, #eef2ff, #c7d2fe); color: var(--navy); }
+    .purple { background: linear-gradient(135deg, var(--purple), #5132c9); color: white; }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 14px;
+      align-items: stretch;
+      margin: 0 auto 16px;
+      max-width: 1500px;
+    }
+
+    .score-card {
+      background: rgba(255, 250, 240, 0.97);
+      border: 4px solid var(--yellow);
+      border-radius: 24px;
+      padding: 12px;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .team-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      color: var(--navy);
+    }
+
+    .team-name { font-size: clamp(1.25rem, 2vw, 2rem); font-weight: 1000; overflow-wrap: anywhere; }
+    .score { font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 1000; color: var(--blue); }
+
+    .helps { display: flex; flex-wrap: wrap; gap: 8px; }
+    .help-btn {
+      padding: 9px 11px;
+      border-radius: 14px;
+      font-size: 0.98rem;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.18), var(--soft-shadow);
+      background: linear-gradient(135deg, #ffffff, #fce7f3);
+      color: var(--navy);
+      border: 2px solid #f9a8d4;
+    }
+
+    .help-btn.used { background: var(--gray); color: var(--muted); border-color: #b4b9c9; }
+
+    .game-title-mini {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: rgba(16, 26, 77, 0.92);
+      color: white;
+      border: 4px solid var(--yellow);
+      border-radius: 24px;
+      padding: 14px 18px;
+      box-shadow: var(--soft-shadow);
+      font-weight: 1000;
+      font-size: clamp(1.1rem, 2vw, 2rem);
+      min-width: min(360px, 100%);
+    }
+
+    .board-tools {
+      max-width: 1500px;
+      margin: 0 auto 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .toggle {
+      background: rgba(255, 250, 240, 0.97);
+      color: var(--navy);
+      border: 4px solid #c7d2fe;
+      font-size: clamp(1rem, 1.6vw, 1.35rem);
+    }
+
+    .toggle.on { border-color: var(--red); background: linear-gradient(135deg, #fff1f2, #fecdd3); }
+
+    .board-wrap {
+      max-width: 1500px;
+      margin: 0 auto;
+      background: rgba(9, 15, 51, 0.76);
+      border: 6px solid var(--yellow);
+      border-radius: 30px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+    }
+
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(9, minmax(130px, 1fr));
+      gap: 10px;
+      min-width: 1180px;
+    }
+
+    .category {
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: white;
+      font-size: clamp(1rem, 1.25vw, 1.35rem);
+      font-weight: 1000;
+      text-shadow: 1px 2px 0 rgba(0,0,0,0.28);
+      box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2);
+    }
+
+    .point-btn {
+      width: 100%;
+      min-height: 92px;
+      font-size: clamp(1.65rem, 2.6vw, 2.65rem);
+      color: var(--navy);
+      background: linear-gradient(135deg, var(--yellow), #ffb703);
+      border-radius: 16px;
+      animation: pulseGlow 4s ease-in-out infinite;
+    }
+
+    .point-btn.used {
+      background: linear-gradient(135deg, #bdc3d1, #8d96aa);
+      color: #4b5568;
+      animation: none;
+      text-decoration: line-through;
+    }
+
+    .question-card { margin: 0 auto; max-width: 1240px; text-align: left; }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #e0f2fe;
+      color: #0f3460;
+      border: 3px solid #7dd3fc;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: clamp(1rem, 1.5vw, 1.4rem);
+      font-weight: 1000;
+    }
+
+    .question-text {
+      background: linear-gradient(135deg, #ffffff, #fff7d6);
+      border: 4px solid var(--yellow);
+      border-radius: 24px;
+      padding: clamp(18px, 3vw, 30px);
+      font-size: clamp(1.8rem, 3.8vw, 3.8rem);
+      line-height: 1.1;
+      font-weight: 1000;
+      text-align: center;
+      color: var(--navy);
+      margin: 14px 0;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(240px, 1fr));
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .choice {
+      background: white;
+      border: 4px solid #c7d2fe;
+      border-radius: 20px;
+      padding: 18px;
+      font-size: clamp(1.2rem, 2vw, 1.8rem);
+      font-weight: 900;
+      color: var(--navy);
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      text-align: left;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.14), var(--soft-shadow);
+    }
+
+    .choice.selected-choice {
+      border-color: var(--orange);
+      background: linear-gradient(135deg, #fff7ed, #fed7aa);
+      transform: translateY(-2px) scale(1.01);
+    }
+
+    .choice.correct-choice {
+      border-color: #16a34a;
+      background: linear-gradient(135deg, #dcfce7, #86efac);
+      color: #052e16;
+    }
+
+    .choice.incorrect-choice {
+      border-color: var(--red);
+      background: linear-gradient(135deg, #ffe4e6, #fda4af);
+      color: #7f1d1d;
+    }
+
+    .choice.hidden-choice {
+      opacity: 0.18;
+      text-decoration: line-through;
+      filter: grayscale(1);
+    }
+
+    .short-prompt {
+      background: #f0fdf4;
+      border: 4px dashed #22c55e;
+      border-radius: 22px;
+      padding: 18px;
+      text-align: center;
+      font-size: clamp(1.25rem, 2vw, 1.8rem);
+      font-weight: 900;
+      color: #14532d;
+    }
+
+    .timer-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .timer-display {
+      min-width: 180px;
+      text-align: center;
+      background: var(--navy);
+      color: white;
+      border: 5px solid var(--yellow);
+      border-radius: 22px;
+      padding: 12px 18px;
+      font-size: clamp(2rem, 4vw, 4.5rem);
+      font-weight: 1000;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .timer-display.low { color: var(--yellow); border-color: var(--red); animation: pulseGlow 0.8s ease-in-out infinite; }
+
+    .message {
+      min-height: 46px;
+      text-align: center;
+      color: var(--navy);
+      font-size: clamp(1.15rem, 2vw, 1.65rem);
+      font-weight: 1000;
+      margin: 8px 0;
+    }
+
+    .answer-box {
+      display: none;
+      background: #ecfeff;
+      border: 5px solid var(--sky);
+      border-radius: 24px;
+      padding: 20px;
+      margin: 16px 0;
+      text-align: center;
+      animation: popIn 0.25s ease both;
+    }
+
+    .answer-box.visible { display: block; }
+    .answer-box .answer { font-size: clamp(1.45rem, 2.6vw, 2.5rem); font-weight: 1000; color: var(--navy); margin-bottom: 8px; }
+    .answer-box .explanation { font-size: clamp(1.1rem, 1.8vw, 1.55rem); font-weight: 800; color: #334155; line-height: 1.35; }
+
+    .button-row, .scoring-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .button-row button, .scoring-row button { font-size: clamp(1rem, 1.65vw, 1.45rem); }
+    .scoring-row { display: none; }
+    .scoring-row.visible { display: flex; }
+
+    .final-card { margin: 0 auto; max-width: 1050px; }
+    .final-scores { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin: 24px 0; }
+    .final-score-box {
+      background: white;
+      border: 5px solid #c7d2fe;
+      border-radius: 26px;
+      padding: 22px;
+      box-shadow: var(--soft-shadow);
+    }
+    .final-score-box strong { display: block; font-size: clamp(1.4rem, 2.5vw, 2.5rem); color: var(--navy); overflow-wrap: anywhere; }
+    .final-score-box span { display: block; font-size: clamp(2.3rem, 5vw, 5rem); font-weight: 1000; color: var(--blue); }
+    .winner { font-size: clamp(1.8rem, 4vw, 4rem); font-weight: 1000; color: var(--pink); margin: 14px 0; }
+    .reflection {
+      background: #fff7ed;
+      border: 5px dashed var(--orange);
+      border-radius: 24px;
+      padding: 20px;
+      font-size: clamp(1.25rem, 2.4vw, 2.1rem);
+      font-weight: 1000;
+      color: var(--navy);
+      margin: 20px 0;
+    }
+
+    @media (max-width: 900px) {
+      .topbar { grid-template-columns: 1fr; }
+      .game-title-mini { order: -1; min-width: 0; }
+      .setup-grid, .choices, .final-scores { grid-template-columns: 1fr; }
+      .question-card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <section id="startScreen" class="screen active">
+    <div class="title-wrap">
+      <div class="title-card">
+        <span class="badge">Teacher-Controlled Classroom Game</span>
+        <h1>Are You Smarter Than a 5th Grader?</h1>
+        <p class="subtitle">Current Events Edition</p>
+        <div class="setup-grid">
+          <div>
+            <label for="team1Input">Team 1 Name</label>
+            <input id="team1Input" maxlength="24" placeholder="Team 1" />
+          </div>
+          <div>
+            <label for="team2Input">Team 2 Name</label>
+            <input id="team2Input" maxlength="24" placeholder="Team 2" />
+          </div>
+        </div>
+        <button id="startGameBtn" class="primary" type="button">Start Game</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="boardScreen" class="screen">
+    <div id="scoreboard" class="topbar"></div>
+    <div class="board-tools">
+      <button id="penaltyToggle" class="toggle" type="button">Wrong answers lose points: OFF</button>
+      <button id="endGameBtn" class="danger" type="button">End Game</button>
+    </div>
+    <div class="board-wrap">
+      <div id="gameBoard" class="game-board"></div>
+    </div>
+  </section>
+
+  <section id="questionScreen" class="screen">
+    <div id="questionScoreboard" class="topbar"></div>
+    <div class="question-card">
+      <div class="question-header">
+        <span id="qCategory" class="pill"></span>
+        <span id="qGrade" class="pill"></span>
+        <span id="qPoints" class="pill"></span>
+      </div>
+      <div id="questionText" class="question-text"></div>
+      <div id="choices" class="choices"></div>
+      <div id="shortPrompt" class="short-prompt" style="display:none;">Debate prompt: Students should explain their claim, evidence, and trade-off out loud.</div>
+      <div class="timer-row">
+        <div id="timerDisplay" class="timer-display">60</div>
+        <button id="startTimerBtn" class="secondary" type="button">Start 60 Second Timer</button>
+        <button id="resetTimerBtn" class="neutral" type="button">Reset Timer</button>
+      </div>
+      <div id="message" class="message"></div>
+      <div id="answerBox" class="answer-box">
+        <div id="answerText" class="answer"></div>
+        <div id="explanationText" class="explanation"></div>
+      </div>
+      <div class="button-row">
+        <button id="showAnswerBtn" class="primary" type="button">Show Suggested Answer</button>
+        <button id="questionBackBtn" class="neutral" type="button">Back to Board</button>
+      </div>
+      <div id="scoringRow" class="scoring-row"></div>
+    </div>
+  </section>
+
+  <section id="finalScreen" class="screen">
+    <div class="title-wrap">
+      <div class="final-card">
+        <span class="badge">Final Scores</span>
+        <h2>Game Over!</h2>
+        <div id="finalScores" class="final-scores"></div>
+        <div id="winnerText" class="winner"></div>
+        <div class="reflection">What current event did you understand better today? Explain why it matters.</div>
+        <button id="finalBackBtn" class="primary" type="button">Return to Board</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /* =============================================================
+       QUESTION BANK — 45 classroom-ready questions.
+       Teachers can edit the objects below. Keep category, grade,
+       points, type, question, answer, and explanation for each item.
+       Multiple choice questions also need a choices array.
+       ============================================================= */
+    const questionBank = [
+      {
+        category: "Crime & Justice",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A neighborhood wants to feel safer at night. Which idea is the most fair starting point?",
+        choices: ["More lighting and youth activities", "More cameras in busy areas", "Earlier curfews for all teens", "More police patrols at night"],
+        answer: "More lighting and youth activities",
+        explanation: "This is a strong answer because it tries to prevent problems without blaming one group. Students may debate when cameras, curfews, or patrols are also useful."
+      },
+      {
+        category: "Crime & Justice",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Some stores lock up common items to stop theft. Is that fair to shoppers? Explain both sides.",
+        answer: "A strong answer names a trade-off: stores want to prevent loss, but shoppers may feel judged, delayed, or less welcome.",
+        explanation: "The best responses do not pretend there is one easy answer. They weigh safety, cost, trust, and respect."
+      },
+      {
+        category: "Crime & Justice",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "A city considers using more public cameras downtown. What is the strongest concern people might raise?",
+        choices: ["Privacy and how the video is used", "Whether cameras cost too much", "Whether cameras actually prevent problems", "Whether signs should warn people"],
+        answer: "Privacy and how the video is used",
+        explanation: "Cameras may help solve problems, but people can reasonably debate who sees the video, how long it is kept, and whether it is used fairly."
+      },
+      {
+        category: "Crime & Justice",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should news reports name a young person accused of a serious rule or law violation? Defend your answer.",
+        answer: "A strong answer explains the conflict between the public's right to know and a young person's chance to grow and be treated fairly.",
+        explanation: "Students can take either side if they use reasons such as safety, privacy, accountability, and second chances."
+      },
+      {
+        category: "Crime & Justice",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A school debates random backpack checks after safety concerns. Which response is the most balanced?",
+        choices: ["Use clear rules, family notice, and checks only when needed", "Search everyone daily to keep rules equal", "Use checks only after a specific concern", "Use metal detectors instead of backpack checks"],
+        answer: "Use clear rules, family notice, and checks only when needed",
+        explanation: "This answer balances safety and rights. Students can debate what 'when needed' should mean."
+      },
+
+      {
+        category: "Politics",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A city has money for one big project. Which choice is most likely to create debate?",
+        choices: ["Choosing between parks, roads, housing, or libraries", "Choosing the city logo color", "Choosing the meeting room layout", "Choosing a slogan for a city event"],
+        answer: "Choosing between parks, roads, housing, or libraries",
+        explanation: "Public choices create debate because different people need different things."
+      },
+      {
+        category: "Politics",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should voting be easier if that also makes election offices busier? Explain your view.",
+        answer: "A strong answer weighs access for voters against the need for safe, organized, trustworthy elections.",
+        explanation: "Students may support easier voting or tighter systems, but they should explain the trade-off."
+      },
+      {
+        category: "Politics",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "During an election, which question leads to the best debate?",
+        choices: ["Which candidate's plan best solves a real problem?", "Which candidate connects best with voters?", "Which candidate has the most experience?", "Which candidate explains ideas most clearly?"],
+        answer: "Which candidate's plan best solves a real problem?",
+        explanation: "Good debate focuses on plans, evidence, and values, not just popularity or rumors."
+      },
+      {
+        category: "Politics",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should leaders follow what most people want, or protect rights even when a choice is unpopular?",
+        answer: "A strong answer explains that democracy values majority voice, but rights can protect people from unfair treatment.",
+        explanation: "This is debatable because both majority rule and individual rights matter."
+      },
+      {
+        category: "Politics",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A local government wants to limit public comments at meetings so meetings end on time. What is the best compromise?",
+        choices: ["Set fair time limits and offer written comments too", "Give local residents extra speaking time", "Hold separate meetings for big issues", "Use a lottery if too many people sign up"],
+        answer: "Set fair time limits and offer written comments too",
+        explanation: "This protects participation while keeping meetings workable. Students may debate whether time limits are too strict."
+      },
+
+      {
+        category: "Music / Pop Culture",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A celebrity makes a mistake online and apologizes. What should fans debate?",
+        choices: ["Whether the apology shows learning and repair", "Whether the mistake caused real harm", "Whether time should change how fans respond", "Whether the person's later actions match the apology"],
+        answer: "Whether the apology shows learning and repair",
+        explanation: "People can disagree about forgiveness, but a strong debate looks at actions, harm, and change."
+      },
+      {
+        category: "Music / Pop Culture",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should artists be expected to speak about social issues, or should they just entertain? Explain both sides.",
+        answer: "A strong answer says artists have influence, but they are also people with different roles, knowledge, and boundaries.",
+        explanation: "Students can debate responsibility, free speech, fan expectations, and expertise."
+      },
+      {
+        category: "Music / Pop Culture",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "A song goes viral because of a short video trend. Which question is most worth discussing?",
+        choices: ["Does viral fame help or hurt the meaning of the song?", "Does the trend fairly credit the artist?", "Does the short clip change who hears the song?", "Does the trend make the song more commercial?"],
+        answer: "Does viral fame help or hurt the meaning of the song?",
+        explanation: "Viral trends can help artists reach people, but they can also change how people understand the work."
+      },
+      {
+        category: "Music / Pop Culture",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should old movies or songs with offensive parts be removed, edited, or shown with a warning? Defend one choice.",
+        answer: "A strong answer chooses a position and explains how it balances learning from the past with protecting people from harm.",
+        explanation: "This topic is debatable because history, art, context, and harm all matter."
+      },
+      {
+        category: "Music / Pop Culture",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A fan group tries to 'cancel' a performer after a controversial comment. What is the fairest question to ask first?",
+        choices: ["What was said, what harm happened, and has the person tried to repair it?", "How long ago did the comment happen?", "What do affected people say about it?", "What should fans expect from public figures?"],
+        answer: "What was said, what harm happened, and has the person tried to repair it?",
+        explanation: "A fair response checks facts and considers accountability, context, and repair before judging."
+      },
+
+      {
+        category: "Sports",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A star player misses school events for travel teams. What is the real debate?",
+        choices: ["Sports opportunity versus school balance", "Individual goals versus team duties", "Travel costs versus family budget", "Training time versus rest and health"],
+        answer: "Sports opportunity versus school balance",
+        explanation: "Students can debate dreams, health, grades, family money, and time."
+      },
+      {
+        category: "Sports",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should athletes be role models even when they did not ask for that job? Explain.",
+        answer: "A strong answer says fame gives influence, but athletes are still people who may make mistakes.",
+        explanation: "Good answers can argue either side using responsibility, privacy, and public attention."
+      },
+      {
+        category: "Sports",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "A league adds a new safety rule that changes how the game is played. What is the strongest debate?",
+        choices: ["Player safety versus keeping the traditional game feel", "Strict rules versus referee judgment", "Fast action versus fewer injuries", "Pro-level rules versus youth-level rules"],
+        answer: "Player safety versus keeping the traditional game feel",
+        explanation: "Safety matters, but fans and players may disagree about how much a sport should change."
+      },
+      {
+        category: "Sports",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should college athletes be paid beyond scholarships? Give one argument for and one against.",
+        answer: "A strong answer notes athletes can bring in money and risk injury, while schools may worry about fairness, budgets, and team balance.",
+        explanation: "This debate has real trade-offs about money, education, work, and fairness."
+      },
+      {
+        category: "Sports",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A city may spend public money on a new stadium. Which question should voters ask first?",
+        choices: ["Will the public benefits be worth the public cost?", "Will jobs from the stadium last long enough?", "Could the money help other public needs?", "Will the team help pay a fair share?"],
+        answer: "Will the public benefits be worth the public cost?",
+        explanation: "Supporters may point to jobs and pride. Critics may point to schools, housing, or roads that also need money."
+      },
+
+      {
+        category: "Technology",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A school lets students use AI for brainstorming but not final answers. What is the main idea?",
+        choices: ["Use tools for help, but still do your own thinking", "Allow AI only when students cite it", "Use AI only for grammar and feedback", "Let each teacher set different AI rules"],
+        answer: "Use tools for help, but still do your own thinking",
+        explanation: "This answer keeps the focus on learning. Students can debate where help ends and cheating begins."
+      },
+      {
+        category: "Technology",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should phones be banned during the whole school day or allowed at some times? Explain both sides.",
+        answer: "A strong answer weighs focus and safety against communication, responsibility, and real-life tech habits.",
+        explanation: "There is not one obvious answer because phones can distract students and also be useful."
+      },
+      {
+        category: "Technology",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "A social media app changes its algorithm. Which concern is most important to discuss?",
+        choices: ["What content it pushes and how it affects users", "Whether users can control what they see", "Whether creators are treated fairly", "Whether the app explains the change clearly"],
+        answer: "What content it pushes and how it affects users",
+        explanation: "Algorithms can shape what people see, believe, buy, and feel."
+      },
+      {
+        category: "Technology",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should schools use software that watches student screens? Give a reason for and against.",
+        answer: "A strong answer says monitoring can help safety and focus, but it can also raise privacy and trust concerns.",
+        explanation: "Students should show they understand why adults may want monitoring and why students may object."
+      },
+      {
+        category: "Technology",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A company uses AI to choose who gets a job interview. What is the biggest debate?",
+        choices: ["Speed and efficiency versus bias and fairness", "Privacy versus better job matching", "Human judgment versus computer scoring", "Lower hiring costs versus applicant trust"],
+        answer: "Speed and efficiency versus bias and fairness",
+        explanation: "AI can process many applications, but it may repeat unfair patterns if the data or rules are biased."
+      },
+
+      {
+        category: "Identity & Beliefs",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A classroom discusses a cultural tradition. What is the best debate rule?",
+        choices: ["Ask honest questions without mocking people", "Let people choose what they want to share", "Compare traditions without ranking them", "Use trusted sources before making claims"],
+        answer: "Ask honest questions without mocking people",
+        explanation: "Hard topics can be discussed when people feel respected enough to speak."
+      },
+      {
+        category: "Identity & Beliefs",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should schools change rules for students' religious or cultural clothing? Explain a fair approach.",
+        answer: "A strong answer balances safety and shared rules with respect for identity, belief, and belonging.",
+        explanation: "Students can debate uniforms, fairness, safety, and freedom of expression."
+      },
+      {
+        category: "Identity & Beliefs",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "A town wants a holiday display in a public space. What is the fairest question?",
+        choices: ["How can the space respect different beliefs and non-beliefs?", "Should the display rotate between groups?", "Should the space use only nonreligious symbols?", "Should private groups sponsor their own displays?"],
+        answer: "How can the space respect different beliefs and non-beliefs?",
+        explanation: "Public spaces serve many people, so fairness may require inclusion, rotation, or neutral rules."
+      },
+      {
+        category: "Identity & Beliefs",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "When does a joke about identity become harmful instead of funny? Give a test people could use.",
+        answer: "A strong answer asks who is being targeted, whether the group has less power, and whether people are being invited to laugh or being laughed at.",
+        explanation: "Humor can connect people, but it can also make people feel unsafe or disrespected."
+      },
+      {
+        category: "Identity & Beliefs",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A school club wants to limit membership to students who share an identity. What is the most balanced debate question?",
+        choices: ["Does the limit create safety and support, or unfairly exclude others?", "Can allies support the club in another role?", "Should membership rules depend on the club's purpose?", "How can privacy and access both be respected?"],
+        answer: "Does the limit create safety and support, or unfairly exclude others?",
+        explanation: "Students may disagree because belonging, privacy, support, and equal access all matter."
+      },
+
+      {
+        category: "World News",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "Two countries disagree over water from the same river. What makes the issue hard?",
+        choices: ["Both sides may need the water", "One side may live upstream", "Farms, cities, and wildlife may compete", "Climate or drought may make less water available"],
+        answer: "Both sides may need the water",
+        explanation: "Shared resources can create debate because each side may have real needs."
+      },
+      {
+        category: "World News",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should countries accept more people fleeing danger if it costs money and planning? Explain both sides.",
+        answer: "A strong answer weighs human safety and compassion against housing, jobs, schools, and local resources.",
+        explanation: "Migration debates are strongest when students consider both people in danger and communities receiving them."
+      },
+      {
+        category: "World News",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "When countries disagree, why might negotiation be better than threats?",
+        choices: ["It can protect people while looking for a deal", "It may leave both sides partly unhappy", "It can take longer than quick action", "It may need help from other countries"],
+        answer: "It can protect people while looking for a deal",
+        explanation: "Negotiation is not perfect, but it can reduce harm and create choices besides conflict."
+      },
+      {
+        category: "World News",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should rich countries pay more to help poorer countries handle climate disasters? Defend your answer.",
+        answer: "A strong answer discusses responsibility, ability to pay, fairness, and how climate problems cross borders.",
+        explanation: "Students can argue different positions if they explain what fairness means to them."
+      },
+      {
+        category: "World News",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A country limits internet access during protests. What is the biggest debate?",
+        choices: ["Public safety claims versus free speech and information", "Government control versus public trust", "Stopping rumors versus blocking real news", "Short emergency limits versus long-term censorship"],
+        answer: "Public safety claims versus free speech and information",
+        explanation: "Governments may claim safety reasons, while critics may argue people need communication and press freedom."
+      },
+
+      {
+        category: "U.S. News",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A city changes bus routes to save money. Who might disagree?",
+        choices: ["People who rely on buses and people worried about taxes", "Workers who need early routes and drivers who want shorter shifts", "Students who ride buses and neighborhoods with less service", "Business owners and people who need affordable transportation"],
+        answer: "People who rely on buses and people worried about taxes",
+        explanation: "Budget choices can affect people in different ways."
+      },
+      {
+        category: "U.S. News",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "Should schools have stricter attendance rules if some students have hard life situations? Explain.",
+        answer: "A strong answer weighs learning time and responsibility against transportation, health, work, family, and housing challenges.",
+        explanation: "This is debatable because schools need expectations, but students may need support, too."
+      },
+      {
+        category: "U.S. News",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "A town may build more housing, but some neighbors worry about traffic. What is the key debate?",
+        choices: ["More homes and affordability versus crowding and planning", "Apartment buildings versus single-family homes", "New neighbors versus pressure on schools and roads", "Fast building versus careful environmental review"],
+        answer: "More homes and affordability versus crowding and planning",
+        explanation: "Housing debates often include cost, fairness, neighborhood change, and services."
+      },
+      {
+        category: "U.S. News",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Should public schools offer free meals to all students, even families who can pay? Give both sides.",
+        answer: "A strong answer says universal meals can reduce hunger and shame, while critics may worry about cost and who should pay.",
+        explanation: "Students should connect the issue to health, learning, dignity, budgets, and fairness."
+      },
+      {
+        category: "U.S. News",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "A state considers raising the minimum wage. What trade-off is most important?",
+        choices: ["Higher worker pay versus possible costs for businesses and prices", "Helping workers now versus possible fewer entry-level jobs", "Local living costs versus one statewide rule", "Big companies versus small business budgets"],
+        answer: "Higher worker pay versus possible costs for businesses and prices",
+        explanation: "Supporters focus on living costs and fairness. Critics may worry about small businesses, prices, or fewer jobs."
+      },
+
+      {
+        category: "Wild Card",
+        grade: "1st Grade",
+        points: 100,
+        type: "mc",
+        question: "A headline makes you angry right away. What is the smartest first move?",
+        choices: ["Pause, check the source, and ask what is missing", "Look for the same story in another trusted place", "Read beyond the headline before reacting", "Ask who benefits if people get angry"],
+        answer: "Pause, check the source, and ask what is missing",
+        explanation: "Strong debate starts with facts, not just feelings."
+      },
+      {
+        category: "Wild Card",
+        grade: "2nd Grade",
+        points: 200,
+        type: "short",
+        question: "What makes a debate better: trying to win, or trying to understand? Defend your answer.",
+        answer: "A strong answer explains that winning can motivate people, but understanding helps people learn and solve real problems.",
+        explanation: "Students can choose either side if they explain how a good discussion should work."
+      },
+      {
+        category: "Wild Card",
+        grade: "3rd Grade",
+        points: 300,
+        type: "mc",
+        question: "Which sentence shows the strongest debate skill?",
+        choices: ["I disagree because the evidence could also mean something else.", "I see your point, but I weigh the trade-off differently.", "What evidence would change your mind?", "Can we define the problem before arguing solutions?"],
+        answer: "I disagree because the evidence could also mean something else.",
+        explanation: "Good debate challenges ideas with reasons instead of attacking people."
+      },
+      {
+        category: "Wild Card",
+        grade: "4th Grade",
+        points: 400,
+        type: "short",
+        question: "Pick one current issue and explain what two reasonable people might disagree about.",
+        answer: "A strong answer names the issue, gives both sides fairly, and explains the value or concern behind each side.",
+        explanation: "The goal is not to agree with both sides. The goal is to understand why the disagreement exists."
+      },
+      {
+        category: "Wild Card",
+        grade: "5th Grade",
+        points: 500,
+        type: "mc",
+        question: "Which answer should earn points in a debatable question?",
+        choices: ["A clear claim with evidence, a trade-off, and respect for another view", "A personal story connected to a bigger pattern", "A solution that names who benefits and who pays", "A response that admits what it does not know yet"],
+        answer: "A clear claim with evidence, a trade-off, and respect for another view",
+        explanation: "Debatable does not mean anything goes. Strong answers still need reasons, evidence, and respect."
+      }
+    ];
+
+    const categories = ["Crime & Justice", "Politics", "Music / Pop Culture", "Sports", "Technology", "Identity & Beliefs", "World News", "U.S. News", "Wild Card"];
+    const grades = [
+      { label: "1st Grade", points: 100 },
+      { label: "2nd Grade", points: 200 },
+      { label: "3rd Grade", points: 300 },
+      { label: "4th Grade", points: 400 },
+      { label: "5th Grade", points: 500 }
+    ];
+
+    const state = {
+      teams: [
+        { name: "Team 1", score: 0, helps: { peek: false, copy: false, save: false } },
+        { name: "Team 2", score: 0, helps: { peek: false, copy: false, save: false } }
+      ],
+      used: new Set(),
+      penaltyOn: false,
+      currentQuestion: null,
+      currentIndex: null,
+      selectedChoice: null,
+      hiddenChoices: [],
+      timer: 60,
+      timerId: null,
+      answerShown: false,
+      audioContext: null
+    };
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      renderScoreboards();
+    }
+
+    function startGame() {
+      const team1 = document.getElementById("team1Input").value.trim();
+      const team2 = document.getElementById("team2Input").value.trim();
+      state.teams[0].name = team1 || "Team 1";
+      state.teams[1].name = team2 || "Team 2";
+      renderBoard();
+      showScreen("boardScreen");
+    }
+
+    function renderScoreboards() {
+      const html = `
+        ${teamCard(0)}
+        <div class="game-title-mini">Current Events Edition</div>
+        ${teamCard(1)}
+      `;
+      const boardScoreboard = document.getElementById("scoreboard");
+      const questionScoreboard = document.getElementById("questionScoreboard");
+      if (boardScoreboard) boardScoreboard.innerHTML = html;
+      if (questionScoreboard) questionScoreboard.innerHTML = html;
+    }
+
+    function teamCard(teamIndex) {
+      const team = state.teams[teamIndex];
+      return `
+        <div class="score-card">
+          <div class="team-line">
+            <span class="team-name">${escapeHtml(team.name)}</span>
+            <span class="score">${team.score}</span>
+          </div>
+          <div class="helps">
+            ${helpButton(teamIndex, "peek", "Peek")}
+            ${helpButton(teamIndex, "copy", "Copy")}
+            ${helpButton(teamIndex, "save", "Save")}
+          </div>
+        </div>
+      `;
+    }
+
+    function helpButton(teamIndex, helpKey, label) {
+      const used = state.teams[teamIndex].helps[helpKey];
+      return `<button class="help-btn ${used ? "used" : ""}" ${used ? "disabled" : ""} onclick="useHelp(${teamIndex}, '${helpKey}')">${label}: ${used ? "Used" : "Ready"}</button>`;
+    }
+
+    function renderBoard() {
+      renderScoreboards();
+      document.getElementById("penaltyToggle").textContent = `Wrong answers lose points: ${state.penaltyOn ? "ON" : "OFF"}`;
+      document.getElementById("penaltyToggle").classList.toggle("on", state.penaltyOn);
+      const board = document.getElementById("gameBoard");
+      board.innerHTML = "";
+      categories.forEach(category => {
+        const cell = document.createElement("div");
+        cell.className = "category";
+        cell.textContent = category;
+        board.appendChild(cell);
+      });
+      grades.forEach(grade => {
+        categories.forEach(category => {
+          const index = questionBank.findIndex(q => q.category === category && q.grade === grade.label && q.points === grade.points);
+          const btn = document.createElement("button");
+          btn.className = "point-btn";
+          btn.textContent = grade.points;
+          if (index < 0) {
+            btn.textContent = "?";
+            btn.disabled = true;
+          } else if (state.used.has(index)) {
+            btn.classList.add("used");
+            btn.textContent = "Used";
+            btn.disabled = true;
+          } else {
+            btn.onclick = () => openQuestion(index);
+          }
+          board.appendChild(btn);
+        });
+      });
+    }
+
+    function openQuestion(index) {
+      state.currentIndex = index;
+      state.currentQuestion = questionBank[index];
+      state.answerShown = false;
+      state.selectedChoice = null;
+      state.hiddenChoices = [];
+      resetTimer();
+      const q = state.currentQuestion;
+      document.getElementById("qCategory").textContent = q.category;
+      document.getElementById("qGrade").textContent = q.grade;
+      document.getElementById("qPoints").textContent = `${q.points} points`;
+      document.getElementById("questionText").textContent = q.question;
+      document.getElementById("message").textContent = "";
+      document.getElementById("answerBox").classList.remove("visible");
+      document.getElementById("showAnswerBtn").style.display = "inline-block";
+      document.getElementById("scoringRow").classList.remove("visible");
+      renderQuestionOptions();
+      showScreen("questionScreen");
+    }
+
+    function renderQuestionOptions(hiddenChoices = state.hiddenChoices) {
+      const q = state.currentQuestion;
+      const choices = document.getElementById("choices");
+      const shortPrompt = document.getElementById("shortPrompt");
+      choices.innerHTML = "";
+      if (q.type === "mc") {
+        choices.style.display = "grid";
+        shortPrompt.style.display = "none";
+        q.choices.forEach((choice, i) => {
+          const btn = document.createElement("button");
+          const isHidden = hiddenChoices.includes(choice);
+          const isSelected = state.selectedChoice === choice;
+          const isCorrect = state.answerShown && choice === q.answer;
+          const isIncorrect = state.answerShown && isSelected && choice !== q.answer;
+          btn.type = "button";
+          btn.className = `choice ${isHidden ? "hidden-choice" : ""} ${isSelected ? "selected-choice" : ""} ${isCorrect ? "correct-choice" : ""} ${isIncorrect ? "incorrect-choice" : ""}`;
+          btn.textContent = `${String.fromCharCode(65 + i)}. ${choice}`;
+          btn.disabled = isHidden;
+          btn.onclick = () => selectChoice(choice);
+          choices.appendChild(btn);
+        });
+      } else {
+        choices.style.display = "none";
+        shortPrompt.style.display = "block";
+      }
+    }
+
+    function selectChoice(choice) {
+      if (!state.currentQuestion || state.currentQuestion.type !== "mc" || state.answerShown) return;
+      if (state.hiddenChoices.includes(choice)) return;
+      state.selectedChoice = choice;
+      renderQuestionOptions();
+      document.getElementById("message").textContent = `Selected: ${choice}. Click Show Suggested Answer when ready.`;
+      playTone("answer");
+    }
+
+    function showAnswer() {
+      const q = state.currentQuestion;
+      state.answerShown = true;
+      clearInterval(state.timerId);
+      document.getElementById("answerText").textContent = `Suggested answer: ${q.answer}`;
+      document.getElementById("explanationText").textContent = q.explanation;
+      document.getElementById("answerBox").classList.add("visible");
+      document.getElementById("showAnswerBtn").style.display = "none";
+      renderQuestionOptions();
+      renderScoringButtons();
+      playTone("answer");
+    }
+
+    function renderScoringButtons() {
+      const row = document.getElementById("scoringRow");
+      row.innerHTML = `
+        <button class="success" onclick="scoreCorrect(0)">${escapeHtml(state.teams[0].name)} Correct</button>
+        <button class="success" onclick="scoreCorrect(1)">${escapeHtml(state.teams[1].name)} Correct</button>
+        ${state.penaltyOn ? `<button class="danger" onclick="scoreIncorrect(0)">${escapeHtml(state.teams[0].name)} Incorrect</button>` : ""}
+        ${state.penaltyOn ? `<button class="danger" onclick="scoreIncorrect(1)">${escapeHtml(state.teams[1].name)} Incorrect</button>` : ""}
+        <button class="purple" onclick="noPoints()">No Points</button>
+        <button class="neutral" onclick="backToBoard(false)">Back to Board</button>
+      `;
+      row.classList.add("visible");
+    }
+
+    function scoreCorrect(teamIndex) {
+      state.teams[teamIndex].score += state.currentQuestion.points;
+      markUsedAndReturn();
+      playTone("correct");
+    }
+
+    function scoreIncorrect(teamIndex) {
+      state.teams[teamIndex].score -= state.currentQuestion.points;
+      document.getElementById("message").textContent = `${state.teams[teamIndex].name} lost ${state.currentQuestion.points} points.`;
+      renderScoreboards();
+      playTone("wrong");
+    }
+
+    function noPoints() {
+      markUsedAndReturn();
+      playTone("wrong");
+    }
+
+    function markUsedAndReturn() {
+      if (state.currentIndex !== null) state.used.add(state.currentIndex);
+      backToBoard(true);
+    }
+
+    function backToBoard(shouldRender) {
+      clearInterval(state.timerId);
+      if (shouldRender) renderBoard();
+      showScreen("boardScreen");
+    }
+
+    function togglePenalty() {
+      state.penaltyOn = !state.penaltyOn;
+      renderBoard();
+    }
+
+    function useHelp(teamIndex, helpKey) {
+      const team = state.teams[teamIndex];
+      if (team.helps[helpKey]) return;
+      const q = state.currentQuestion;
+      if (helpKey === "peek") {
+        if (!q || q.type !== "mc") {
+          document.getElementById("message").textContent = "Peek only works on multiple choice questions. It was not used.";
+          playTone("wrong");
+          return;
+        }
+        const wrongChoices = q.choices.filter(choice => choice !== q.answer);
+        state.hiddenChoices = wrongChoices.slice(0, 2);
+        if (state.hiddenChoices.includes(state.selectedChoice)) state.selectedChoice = null;
+        team.helps.peek = true;
+        renderQuestionOptions();
+        document.getElementById("message").textContent = `${team.name} used Peek: two wrong choices are hidden.`;
+      } else if (helpKey === "copy") {
+        team.helps.copy = true;
+        document.getElementById("message").textContent = `${team.name} used Copy: they may copy the other team's answer.`;
+      } else if (helpKey === "save") {
+        team.helps.save = true;
+        document.getElementById("message").textContent = `${team.name} used Save: they get one second chance.`;
+      }
+      renderScoreboards();
+      playTone("answer");
+    }
+
+    function startTimer() {
+      clearInterval(state.timerId);
+      if (state.timer <= 0) state.timer = 60;
+      updateTimerDisplay();
+      state.timerId = setInterval(() => {
+        state.timer -= 1;
+        updateTimerDisplay();
+        if (state.timer <= 0) {
+          clearInterval(state.timerId);
+          document.getElementById("message").textContent = "Time's up!";
+          playTone("wrong");
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(state.timerId);
+      state.timer = 60;
+      updateTimerDisplay();
+      const message = document.getElementById("message");
+      if (message) message.textContent = "";
+    }
+
+    function updateTimerDisplay() {
+      const display = document.getElementById("timerDisplay");
+      if (!display) return;
+      display.textContent = state.timer;
+      display.classList.toggle("low", state.timer <= 10);
+    }
+
+    function endGame() {
+      clearInterval(state.timerId);
+      const finalScores = document.getElementById("finalScores");
+      finalScores.innerHTML = state.teams.map(team => `
+        <div class="final-score-box">
+          <strong>${escapeHtml(team.name)}</strong>
+          <span>${team.score}</span>
+        </div>
+      `).join("");
+      const winner = document.getElementById("winnerText");
+      if (state.teams[0].score === state.teams[1].score) {
+        winner.textContent = "It's a tie! Great teamwork from both teams!";
+      } else {
+        const winningTeam = state.teams[0].score > state.teams[1].score ? state.teams[0] : state.teams[1];
+        winner.textContent = `${winningTeam.name} wins!`;
+      }
+      showScreen("finalScreen");
+    }
+
+    function playTone(kind) {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        if (!state.audioContext) state.audioContext = new AudioContext();
+        const ctx = state.audioContext;
+        const now = ctx.currentTime;
+        const notes = kind === "correct" ? [523.25, 659.25, 783.99] : kind === "wrong" ? [220, 164.81] : [440, 554.37];
+        notes.forEach((frequency, i) => {
+          const oscillator = ctx.createOscillator();
+          const gain = ctx.createGain();
+          oscillator.type = kind === "wrong" ? "sawtooth" : "triangle";
+          oscillator.frequency.setValueAtTime(frequency, now + i * 0.11);
+          gain.gain.setValueAtTime(0.0001, now + i * 0.11);
+          gain.gain.exponentialRampToValueAtTime(0.16, now + i * 0.11 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.11 + 0.16);
+          oscillator.connect(gain).connect(ctx.destination);
+          oscillator.start(now + i * 0.11);
+          oscillator.stop(now + i * 0.11 + 0.18);
+        });
+      } catch (error) {
+        // Some browsers block sound until a button is clicked. The game still works without audio.
+      }
+    }
+
+
+    function wireStaticButtons() {
+      const handlers = {
+        startGameBtn: startGame,
+        penaltyToggle: togglePenalty,
+        endGameBtn: endGame,
+        startTimerBtn: startTimer,
+        resetTimerBtn: resetTimer,
+        showAnswerBtn: showAnswer,
+        questionBackBtn: () => backToBoard(false),
+        finalBackBtn: () => showScreen("boardScreen")
+      };
+      Object.entries(handlers).forEach(([id, handler]) => {
+        const button = document.getElementById(id);
+        if (button) button.addEventListener("click", event => {
+          event.preventDefault();
+          handler();
+        });
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>'"]/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        '"': "&quot;"
+      }[char]));
+    }
+
+    // Expose controls on window so all teacher-clicked buttons work reliably,
+    // including inline handlers and dynamically rendered buttons in local files.
+    Object.assign(window, {
+      showScreen,
+      startGame,
+      togglePenalty,
+      endGame,
+      startTimer,
+      resetTimer,
+      showAnswer,
+      selectChoice,
+      backToBoard,
+      scoreCorrect,
+      scoreIncorrect,
+      noPoints,
+      useHelp
+    });
+
+    wireStaticButtons();
+    renderBoard();
+  </script>
+</body>
+</html>
